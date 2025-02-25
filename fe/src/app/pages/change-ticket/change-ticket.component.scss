@@ -1,0 +1,51 @@
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  table {
+    width: 100%;
+  }
+  
+  .mat-column-description {
+    min-width: 100px;
+  }
+  
+  .mat-column-impactAnalysis {
+    min-width: 50px;
+  }
+  
+  th.mat-header-cell {
+    padding: 0 16px;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.87);
+  }
+  
+  td.mat-cell {
+    padding: 16px;
+  }
+
+  .mat-mdc-cell {
+    font-size: 14px;
+  }
+
+  .title-container {
+    text-align: center;
+    margin-bottom: 2rem;
+    
+    .mat-card-title {
+      font-size: 24px;
+      font-weight: 500;
+    }
+  }
+  
+  .table-section {
+    margin-top: 20px;
+  }
+
+  .no-data-cell {
+    text-align: center;
+    padding: 2rem !important;
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.54);
+  }

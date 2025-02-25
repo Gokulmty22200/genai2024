@@ -1,0 +1,94 @@
+<mat-card class="cardWithShadow">
+    <mat-card-content>
+      <mat-card-title>Impact Analysis</mat-card-title>
+      <div class="container">
+        <mat-card class="hierarchy-card">
+          <mat-card-header>
+            <mat-card-title>Hierarchy</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <!-- Level 1 -->
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>Level 1 - Security & Load Balancers</mat-panel-title>
+              </mat-expansion-panel-header>
+              
+              <div *ngIf="hierarchyData?.level1">
+                <!-- Security -->
+                <mat-card class="inner-card">
+                  <mat-card-subtitle>Security Components</mat-card-subtitle>
+                  <mat-list>
+                    <mat-list-item *ngFor="let item of hierarchyData.level1.security">
+                      <mat-icon matListItemIcon>security</mat-icon>
+                      <div matListItemTitle>{{item.name}}</div>
+                      <div matListItemLine>ID: {{item.value}}</div>
+                    </mat-list-item>
+                  </mat-list>
+                </mat-card>
+      
+                <!-- Load Balancers -->
+                <mat-card class="inner-card">
+                  <mat-card-subtitle>Load Balancers</mat-card-subtitle>
+                  <mat-list>
+                    <mat-list-item *ngFor="let item of hierarchyData.level1.loadBalancers">
+                      <mat-icon matListItemIcon>balance</mat-icon>
+                      <div matListItemTitle>{{item.name}}</div>
+                      <div matListItemLine>ID: {{item.value}}</div>
+                    </mat-list-item>
+                  </mat-list>
+                </mat-card>
+              </div>
+            </mat-expansion-panel>
+      
+            <!-- Level 2 -->
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>Level 2 - Servers</mat-panel-title>
+              </mat-expansion-panel-header>
+              <mat-card class="inner-card" *ngIf="hierarchyData?.level2">
+                <mat-list>
+                  <mat-list-item *ngFor="let item of hierarchyData.level2.servers">
+                    <mat-icon matListItemIcon>dns</mat-icon>
+                    <div matListItemTitle>{{item.name}}</div>
+                    <div matListItemLine>ID: {{item.value}}</div>
+                  </mat-list-item>
+                </mat-list>
+              </mat-card>
+            </mat-expansion-panel>
+      
+            <!-- Level 3 -->
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>Level 3 - Applications</mat-panel-title>
+              </mat-expansion-panel-header>
+              <mat-card class="inner-card" *ngIf="hierarchyData?.level3">
+                <mat-list>
+                  <mat-list-item *ngFor="let item of hierarchyData.level3.applications">
+                    <mat-icon matListItemIcon>apps</mat-icon>
+                    <div matListItemTitle>{{item.name}}</div>
+                    <div matListItemLine>ID: {{item.value}}</div>
+                  </mat-list-item>
+                </mat-list>
+              </mat-card>
+            </mat-expansion-panel>
+      
+            <!-- Level 4 -->
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>Level 4 - Databases</mat-panel-title>
+              </mat-expansion-panel-header>
+              <mat-card class="inner-card" *ngIf="hierarchyData?.level4">
+                <mat-list>
+                  <mat-list-item *ngFor="let item of hierarchyData.level4.databases">
+                    <mat-icon matListItemIcon>storage</mat-icon>
+                    <div matListItemTitle>{{item.name}}</div>
+                    <div matListItemLine>ID: {{item.value}}</div>
+                  </mat-list-item>
+                </mat-list>
+              </mat-card>
+            </mat-expansion-panel>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-card-content>
+  </mat-card>
