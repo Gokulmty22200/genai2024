@@ -6,6 +6,7 @@ import { AppIconsComponent } from './icons/icons.component';
 import { AppSamplePageComponent } from './sample-page/sample-page.component';
 import { ChangeTicketComponent } from '../change-ticket/change-ticket.component';
 import { ImpactAnalysisComponent } from '../impact-analysis/impact-analysis.component';
+import { ChatboxComponent } from '../chatbox/chatbox.component';
 
 export const ExtraRoutes: Routes = [
   {
@@ -26,6 +27,10 @@ export const ExtraRoutes: Routes = [
       {
         path: 'impact-analysis',
         component: ImpactAnalysisComponent,
+      },
+      {
+        path: 'chat-window',
+        component: ChatboxComponent,
       },
     ],
   },

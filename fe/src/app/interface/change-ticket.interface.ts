@@ -8,3 +8,19 @@ export interface ChangeTicket {
     implementer?: string;
     risk_impact_analysis: string;
   }
+
+ export interface CI {
+    name: string;
+    ip_address: string;
+    operational_status: string;
+    serial_number: string;
+    install_date: string;
+  }
+
+  export interface IpTrafficData {
+    deviceVendor: string;
+    source: string;
+    destination: string;
+    port: string;
+    eventId: string;
+  }

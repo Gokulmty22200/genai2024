@@ -1,13 +1,16 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
+
 import { ChangeTicket } from '../interface/change-ticket.interface';
+import { CI } from '../interface/change-ticket.interface';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TicketService {
-
+  private apiUrl = environment.apiUrl;
   // private apiUrl = 'https://dev221653.service-now.com/api/now/table/change_request';
   private serviceNowUrl = '/api/now/table';
   private localApiUrl = '/local-api/ci';
@@ -57,11 +60,36 @@ export class TicketService {
   );
   }
 
+  getIpData(): Observable<any> {
+    this.serviceNowUrl = '/api/now/table/cmdb_ci'
+    this.queryParams = 'sysparm_query=nameINFirewall%2CApplication%20Server%2001%2CCUST-DB-01%2CGlobal%20App%20Server%2002%2CApplication%20Load%20balancer%2CWeb%20Application%2001%2CWeb%20Application%2002&sysparm_fields=name%2Cserial_number%2Cip_address%2Cinstall_date%2Cowned_by%2Cmodel_id%2Cmanaged_by_group%2Cmanaged_by%2Coperational_status';
+    const headers = new HttpHeaders()
+    .set('Authorization', 'Basic ' + btoa('Virtusaicon:Virtusa25@'))
+    .set('Accept', 'application/json')
+    .set('Content-Type', 'application/json');
+
+  const url = `${this.serviceNowUrl}?${this.queryParams}`;
+  return this.http.get<any>(url, { headers });
+  }
+
   processRelationship(relationData: any): Observable<any> {
     const headers = new HttpHeaders()
     .set('Content-Type', 'application/json');
 
-  return this.http.post(`http://localhost:3000/api/ci/processCIData`, relationData, { headers });
+  return this.http.post(`${this.apiUrl}/ci/processCIData`, relationData, { headers });
   }
 
+  processIpData(selectedIp: any): Observable<any> {
+    const headers = new HttpHeaders()
+    .set('Content-Type', 'application/json');
+
+  return this.http.post(`${this.apiUrl}/ci/processIpData`, selectedIp, { headers });
+  }
+
+  getAppInfo(): string {
+    if (!environment.production && environment.enableDebug) {
+      console.log(`Running ${environment.appName} version ${environment.version}`);
+    }
+    return environment.appName;
+  }
 }

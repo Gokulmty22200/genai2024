@@ -1,0 +1,52 @@
+<mat-card class="cardWithShadow">
+    <mat-card-content>
+      <mat-card-title class="d-flex justify-content-between align-items-center">
+        <span>Chat Window</span>
+        <button mat-icon-button *ngIf="!showUpload" (click)="confirmReupload()" color="warn">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </mat-card-title>
+  
+      <!-- Image Upload Section -->
+      <div *ngIf="showUpload" class="upload-section">
+        <div class="upload-box" (dragover)="onDragOver($event)" (drop)="onDrop($event)" (click)="fileInput.click()">
+          <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" hidden>
+          <mat-icon>cloud_upload</mat-icon>
+          <p>Drag and drop an image or click to select</p>
+        </div>
+      </div>
+  
+      <!-- Chat Section -->
+      <div *ngIf="!showUpload" class="chat-section">
+        <div class="chat-messages" #scrollMe>
+            <div *ngFor="let message of messages" class="message-wrapper" [ngClass]="{'user-message': message.sender === 'user', 'bot-message': message.sender === 'bot'}">
+                <div class="message-bubble">
+                  <div class="message-content" [innerHTML]="message.text | preserveLineBreaks"></div>
+                  <div class="message-time">{{ message.time | date:'shortTime' }}</div>
+                </div>
+              </div>
+          <div *ngIf="isLoading" class="bot-message">
+            <div class="message-content">
+              <span class="typing-indicator">...</span>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Input Area -->
+        <div class="chat-input">
+          <mat-form-field appearance="outline" class="w-100">
+            <input matInput
+                   [(ngModel)]="currentMessage"
+                   placeholder="Type a message..."
+                   (keyup.enter)="sendMessage()">
+            <button mat-icon-button matSuffix (click)="toggleSpeechRecognition()">
+              <mat-icon [class.recording]="isRecording">mic</mat-icon>
+            </button>
+          </mat-form-field>
+          <button mat-fab color="primary" (click)="sendMessage()" [disabled]="!currentMessage">
+            <mat-icon>send</mat-icon>
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>

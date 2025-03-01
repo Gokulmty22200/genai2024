@@ -1,94 +1,208 @@
 <mat-card class="cardWithShadow">
     <mat-card-content>
-      <mat-card-title>Impact Analysis</mat-card-title>
+      <!-- <mat-card-title>Impact Analysis</mat-card-title>
       <div class="container">
-        <mat-card class="hierarchy-card">
-          <mat-card-header>
-            <mat-card-title>Hierarchy</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <!-- Level 1 -->
-            <mat-expansion-panel>
+        <mat-card class="hierarchy-card"> -->
+          <!-- <mat-card-header> -->
+            <!-- <mat-card-title>Impact Analysis View</mat-card-title> -->
+          <!-- </mat-card-header> -->
+          <!-- <mat-card-content> -->
+
+             <!-- Loader -->
+            <div class="loader-container" *ngIf="isLoading">
+              <mat-spinner diameter="50"></mat-spinner>
+              <p class="loading-text">Analyzing network traffic...</p>
+            </div>
+
+            <mat-card class="traffic-section" *ngIf="!isLoading && trafficData.length > 0">
+              <mat-card-header>
+                <div style="text-align:center;">
+                  <mat-card-title>Impact Analysis</mat-card-title>
+                </div>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="team-grid">
+                  <mat-card class="team-card" *ngFor="let teamData of trafficData">
+                    <mat-card-header>
+                      <mat-card-title class="team-title">
+                        {{teamData.team}}
+                      </mat-card-title>
+                    </mat-card-header>
+                    <mat-divider></mat-divider>
+                    <mat-card-content>
+                      <div class="team-details">
+                        <!-- Port Details -->
+                        <div class="port-section">
+                          <div class="port-details" *ngFor="let port of teamData.records[0].port">
+                            <div class="port-item">
+                              <mat-icon>settings_ethernet</mat-icon>
+                              <span class="port-text">
+                                Port {{port.id}} - {{port.eventId.replace('Access over ', '')}}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+            
+                        <!-- Server Details -->
+                        <div class="server-section">
+                          <div class="server-details">
+                            <mat-icon>computer</mat-icon>
+                            <span class="server-name">{{teamData.records[0].ciName}}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+            <div class="no-data" *ngIf="!isLoading && trafficData.length === 0">
+              <mat-icon>info</mat-icon>
+              <p>No traffic data available</p>
+            </div>
+
+
+            <!-- Level 1 - Firewalls -->
+            <!-- <mat-expansion-panel expanded="true">
               <mat-expansion-panel-header>
-                <mat-panel-title>Level 1 - Security & Load Balancers</mat-panel-title>
+                <mat-panel-title>Security Layer</mat-panel-title>
               </mat-expansion-panel-header>
-              
-              <div *ngIf="hierarchyData?.level1">
-                <!-- Security -->
-                <mat-card class="inner-card">
-                  <mat-card-subtitle>Security Components</mat-card-subtitle>
-                  <mat-list>
-                    <mat-list-item *ngFor="let item of hierarchyData.level1.security">
-                      <mat-icon matListItemIcon>security</mat-icon>
-                      <div matListItemTitle>{{item.name}}</div>
-                      <div matListItemLine>ID: {{item.value}}</div>
-                    </mat-list-item>
-                  </mat-list>
-                </mat-card>
-      
-                <!-- Load Balancers -->
-                <mat-card class="inner-card">
-                  <mat-card-subtitle>Load Balancers</mat-card-subtitle>
-                  <mat-list>
-                    <mat-list-item *ngFor="let item of hierarchyData.level1.loadBalancers">
-                      <mat-icon matListItemIcon>balance</mat-icon>
-                      <div matListItemTitle>{{item.name}}</div>
-                      <div matListItemLine>ID: {{item.value}}</div>
-                    </mat-list-item>
-                  </mat-list>
-                </mat-card>
+              <div *ngFor="let firewall of hierarchyData?.level1?.firewalls">
+                <div class="component-header">
+                  <mat-icon>security</mat-icon>
+                  <span class="component-name">{{firewall.component.name}}</span>
+                </div>
+                <div class="relationship-container" *ngIf="firewall.downstream.length">
+                  <div class="downstream">
+                    <strong>Downstream:</strong>
+                    <ul>
+                      <li *ngFor="let item of firewall.downstream">
+                        {{item.reference.name}}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
-            </mat-expansion-panel>
+            </mat-expansion-panel> -->
       
-            <!-- Level 2 -->
-            <mat-expansion-panel>
+            <!-- Level 2 - Load Balancers -->
+            <!-- <mat-expansion-panel expanded="true">
               <mat-expansion-panel-header>
-                <mat-panel-title>Level 2 - Servers</mat-panel-title>
+                <mat-panel-title>Load Balancer Layer</mat-panel-title>
               </mat-expansion-panel-header>
-              <mat-card class="inner-card" *ngIf="hierarchyData?.level2">
-                <mat-list>
-                  <mat-list-item *ngFor="let item of hierarchyData.level2.servers">
-                    <mat-icon matListItemIcon>dns</mat-icon>
-                    <div matListItemTitle>{{item.name}}</div>
-                    <div matListItemLine>ID: {{item.value}}</div>
-                  </mat-list-item>
-                </mat-list>
-              </mat-card>
-            </mat-expansion-panel>
+              <div *ngFor="let lb of hierarchyData?.level2?.loadBalancers">
+                <div class="component-header">
+                  <mat-icon>balance</mat-icon>
+                  <span class="component-name">{{lb.component.name}}</span>
+                </div>
+                <div class="relationship-container">
+                  <div class="upstream" *ngIf="lb.upstream.length">
+                    <strong>Upstream:</strong>
+                    <ul>
+                      <li *ngFor="let item of lb.upstream">
+                        {{item.reference.name}}
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="downstream" *ngIf="lb.downstream.length">
+                    <strong>Downstream:</strong>
+                    <ul>
+                      <li *ngFor="let item of lb.downstream">
+                        {{item.reference.name}}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </mat-expansion-panel> -->
       
-            <!-- Level 3 -->
-            <mat-expansion-panel>
+            <!-- Level 3 - Servers -->
+            <!-- <mat-expansion-panel expanded="true">
               <mat-expansion-panel-header>
-                <mat-panel-title>Level 3 - Applications</mat-panel-title>
+                <mat-panel-title>Server Layer</mat-panel-title>
               </mat-expansion-panel-header>
-              <mat-card class="inner-card" *ngIf="hierarchyData?.level3">
-                <mat-list>
-                  <mat-list-item *ngFor="let item of hierarchyData.level3.applications">
-                    <mat-icon matListItemIcon>apps</mat-icon>
-                    <div matListItemTitle>{{item.name}}</div>
-                    <div matListItemLine>ID: {{item.value}}</div>
-                  </mat-list-item>
-                </mat-list>
-              </mat-card>
-            </mat-expansion-panel>
+              <div *ngFor="let server of hierarchyData?.level3?.servers">
+                <div class="component-header">
+                  <mat-icon>dns</mat-icon>
+                  <span class="component-name">{{server.component.name}}</span>
+                </div>
+                <div class="relationship-container">
+                  <div class="upstream" *ngIf="server.upstream.length">
+                    <strong>Upstream:</strong>
+                    <ul>
+                      <li *ngFor="let item of server.upstream">
+                        {{item.reference.name}}
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="downstream" *ngIf="server.downstream.length">
+                    <strong>Downstream:</strong>
+                    <ul>
+                      <li *ngFor="let item of server.downstream">
+                        {{item.reference.name}}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </mat-expansion-panel> -->
       
-            <!-- Level 4 -->
-            <mat-expansion-panel>
+            <!-- Level 4 - Applications -->
+            <!-- <mat-expansion-panel expanded="true">
               <mat-expansion-panel-header>
-                <mat-panel-title>Level 4 - Databases</mat-panel-title>
+                <mat-panel-title>Application Layer</mat-panel-title>
               </mat-expansion-panel-header>
-              <mat-card class="inner-card" *ngIf="hierarchyData?.level4">
-                <mat-list>
-                  <mat-list-item *ngFor="let item of hierarchyData.level4.databases">
-                    <mat-icon matListItemIcon>storage</mat-icon>
-                    <div matListItemTitle>{{item.name}}</div>
-                    <div matListItemLine>ID: {{item.value}}</div>
-                  </mat-list-item>
-                </mat-list>
-              </mat-card>
-            </mat-expansion-panel>
-          </mat-card-content>
-        </mat-card>
-      </div>
+              <div *ngFor="let app of hierarchyData?.level4?.applications">
+                <div class="component-header">
+                  <mat-icon>apps</mat-icon>
+                  <span class="component-name">{{app.component.name}}</span>
+                </div>
+                <div class="relationship-container">
+                  <div class="upstream" *ngIf="app.upstream.length">
+                    <strong>Upstream:</strong>
+                    <ul>
+                      <li *ngFor="let item of app.upstream">
+                        {{item.reference.name}}
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="downstream" *ngIf="app.downstream.length">
+                    <strong>Downstream:</strong>
+                    <ul>
+                      <li *ngFor="let item of app.downstream">
+                        {{item.reference.name}}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </mat-expansion-panel> -->
+      
+            <!-- Level 5 - Databases -->
+            <!-- <mat-expansion-panel expanded="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title>Database Layer</mat-panel-title>
+              </mat-expansion-panel-header>
+              <div *ngFor="let db of hierarchyData?.level5?.databases">
+                <div class="component-header">
+                  <mat-icon>storage</mat-icon>
+                  <span class="component-name">{{db.component.name}}</span>
+                </div>
+                <div class="relationship-container">
+                  <div class="upstream" *ngIf="db.upstream.length">
+                    <strong>Upstream:</strong>
+                    <ul>
+                      <li *ngFor="let item of db.upstream">
+                        {{item.reference.name}}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </mat-expansion-panel> -->
+          <!-- </mat-card-content> -->
+        <!-- </mat-card>
+      </div> -->
     </mat-card-content>
   </mat-card>

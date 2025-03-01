@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>Confirm Reupload</h2>
+<mat-dialog-content>
+  Are you sure you want to reupload? This will delete all chat history.
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>No</button>
+  <button mat-button color="warn" [mat-dialog-close]="true">Yes</button>
+</mat-dialog-actions>

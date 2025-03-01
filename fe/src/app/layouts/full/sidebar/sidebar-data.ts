@@ -4,12 +4,12 @@ export const navItems: NavItem[] = [
   {
     navCap: 'Home',
   },
-  // {
-  //   displayName: 'Dashboard',
-  //   iconName: 'layout-dashboard',
-  //   bgcolor: 'primary',
-  //   route: '/dashboard',
-  // },
+  {
+    displayName: 'Dashboard',
+    iconName: 'layout-dashboard',
+    bgcolor: 'primary',
+    route: '/dashboard',
+  },
   // {
   //   navCap: 'Ui Components',
   // },
@@ -74,9 +74,15 @@ export const navItems: NavItem[] = [
   //   route: '/extra/sample-page',
   // },
   {
-    displayName: 'Change Ticket',
+    displayName: 'Risk Analysis',
     iconName: 'aperture',
     bgcolor: 'error',
     route: '/extra/change-ticket',
+  },
+  {
+    displayName: 'Talk to Servicenow',
+    iconName: 'aperture',
+    bgcolor: 'error',
+    route: '/extra/chat-window',
   },
 ];
