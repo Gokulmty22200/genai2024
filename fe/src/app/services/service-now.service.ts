@@ -11,6 +11,8 @@ import { environment } from 'src/environments/environment';
 export class ServiceNowService {
 
     private serviceNowUrl = 'https://dev221653.service-now.com/api/now/table';
+    // private serviceNowUrl = '/api/now/table';
+    
     queryParams?: string;
   constructor(private http: HttpClient) { }
 
@@ -34,7 +36,7 @@ export class ServiceNowService {
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json');
 
-  const url = `${this.serviceNowUrl}?${this.queryParams}`;
+  const url = `${this.serviceNowUrl}/cmdb_rel_ci?${this.queryParams}`;
 
   return this.http.get<any>(url, { headers }).pipe(
     map(response => ({
@@ -64,7 +66,7 @@ export class ServiceNowService {
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json');
 
-  const url = `${this.serviceNowUrl}?${this.queryParams}`;
+  const url = `${this.serviceNowUrl}/cmdb_ci?${this.queryParams}`;
   return this.http.get<any>(url, { headers });
   }
 }
