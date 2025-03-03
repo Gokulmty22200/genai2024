@@ -1,7 +1,0 @@
-{
-    "/api": {
-      "target": "https://dev221653.service-now.com",
-      "secure": false,
-      "changeOrigin": true
-    }
-  }
