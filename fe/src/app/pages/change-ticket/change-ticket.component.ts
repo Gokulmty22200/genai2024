@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 
 import { MaterialModule } from '../../material.module';
 import { TicketService } from '../../services/ticket.service';
+import { ServiceNowService } from 'src/app/services/service-now.service';
 
 @Component({
   selector: 'app-change-ticket',
@@ -33,7 +34,7 @@ export class ChangeTicketComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private ticketService: TicketService, private router: Router, ) {
+  constructor(private ticketService: TicketService, private serviceNow : ServiceNowService, private router: Router, ) {
     // Initialize with empty array of ChangeTicket type
     this.dataSource = new MatTableDataSource<ChangeTicket>([]);
   }
@@ -48,7 +49,7 @@ export class ChangeTicketComponent {
   }
 
   getChangeTicketData(): void {
-    this.ticketService.getChangeTicketData()
+    this.serviceNow.getChangeTicketData()
       .subscribe({
         next: (data: any) => {
           console.log(data.result);

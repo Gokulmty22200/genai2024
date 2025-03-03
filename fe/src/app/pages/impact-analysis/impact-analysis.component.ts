@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../material.module';
 import { TicketService } from '../../services/ticket.service';
 import { CI, IpTrafficData } from '../../interface/change-ticket.interface';
+import { ServiceNowService } from 'src/app/services/service-now.service';
 
 @Component({
   selector: 'app-impact-analysis',
@@ -17,12 +18,12 @@ export class ImpactAnalysisComponent {
   trafficData: any[] = [];
   isLoading = false;
   
-  constructor(private ticketService: TicketService ) {
+  constructor(private ticketService: TicketService, private serviceNow : ServiceNowService ) {
     this.getRelationshipData();
   }
 
   getRelationshipData(): void {
-    this.ticketService.getRelationshipData()
+    this.serviceNow.getRelationshipData()
       .subscribe({
         next: (data: any) => {
           console.log(data.result);
@@ -49,7 +50,7 @@ export class ImpactAnalysisComponent {
   }
 
   getIpData(): void {
-    this.ticketService.getIpData()
+    this.serviceNow.getIpData()
       .subscribe({
         next: (data: any) => {
           console.log(data.result);
