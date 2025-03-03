@@ -11,13 +11,13 @@
              <!-- Loader -->
             <div class="loader-container" *ngIf="isLoading">
               <mat-spinner diameter="50"></mat-spinner>
-              <p class="loading-text">Analyzing network traffic...</p>
+              <p class="loading-text">Analyzing...</p>
             </div>
 
             <mat-card class="traffic-section" *ngIf="!isLoading && trafficData.length > 0">
               <mat-card-header>
                 <div style="text-align:center;">
-                  <mat-card-title>Impact Analysis</mat-card-title>
+                  <mat-card-title>Risk Analysis</mat-card-title>
                 </div>
               </mat-card-header>
               <mat-card-content>
@@ -44,12 +44,12 @@
                         </div>
             
                         <!-- Server Details -->
-                        <div class="server-section">
+                        <!-- <div class="server-section">
                           <div class="server-details">
                             <mat-icon>computer</mat-icon>
                             <span class="server-name">{{teamData.records[0].ciName}}</span>
                           </div>
-                        </div>
+                        </div> -->
                       </div>
                     </mat-card-content>
                   </mat-card>

@@ -51,7 +51,7 @@ mat-expansion-panel {
 }
 
 .mat-expansion-panel-header {
-  background-color: #fafafa;
+  background-color: #a5a9b08a;
 }
 
 .container {
@@ -74,7 +74,7 @@ mat-expansion-panel {
 }
 
 .traffic-item {
-  background-color: #fff;
+  background-color: #a5a9b08a;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
@@ -127,7 +127,7 @@ mat-expansion-panel {
 }
 
 .team-card {
-  background-color: #fff;
+  background-color: #a5a9b08a;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
@@ -165,7 +165,7 @@ mat-expansion-panel {
     align-items: center;
     gap: 8px;
     padding: 8px;
-    background-color: #f5f5f5;
+    background-color: #a5a9b08a;
     border-radius: 4px;
 
     mat-icon {
@@ -210,4 +210,8 @@ mat-divider {
 
 .mat-mdc-card-header {
   display: block !important;
+}
+
+.loader-container {
+  justify-items: center;
 }
