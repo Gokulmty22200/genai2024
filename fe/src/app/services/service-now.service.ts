@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment';
 })
 export class ServiceNowService {
 
-    private serviceNowUrl = environment.serviceNowUrl;
+    private serviceNowUrl = 'https://dev221653.service-now.com/api/now/table';
     queryParams?: string;
   constructor(private http: HttpClient) { }
 
