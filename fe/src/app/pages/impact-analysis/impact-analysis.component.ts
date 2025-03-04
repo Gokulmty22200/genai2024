@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { MaterialModule } from '../../material.module';
 import { TicketService } from '../../services/ticket.service';
 import { CI, IpTrafficData } from '../../interface/change-ticket.interface';
 import { ServiceNowService } from 'src/app/services/service-now.service';
+import { ActivatedRoute } from '@angular/router';
 
 interface FirewallCI {
   operational_status: string;
@@ -25,14 +26,24 @@ interface FirewallCI {
   templateUrl: './impact-analysis.component.html',
   styleUrl: './impact-analysis.component.scss'
 })
-export class ImpactAnalysisComponent {
+export class ImpactAnalysisComponent implements OnInit {
   hierarchyData: any;
   trafficData: any[] = [];
   isLoading = true;
+  changeData: any;
   
-  constructor(private ticketService: TicketService, private serviceNow : ServiceNowService ) {
+  constructor(private ticketService: TicketService, private serviceNow : ServiceNowService, private route: ActivatedRoute ) {
     this.getRelationshipData();
   }
+
+  ngOnInit() {
+    this.route.queryParams.subscribe((params: any) => {
+      if (params['data']) {
+        this.changeData = JSON.parse(params['data']);
+        console.log('Change Data:', this.changeData);
+    }
+    });
+}
 
   getRelationshipData(): void {
     this.serviceNow.getRelationshipData()

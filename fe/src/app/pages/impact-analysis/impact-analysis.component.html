@@ -11,13 +11,13 @@
              <!-- Loader -->
             <div class="loader-container" *ngIf="isLoading">
               <mat-spinner diameter="50"></mat-spinner>
-              <p class="loading-text">Analyzing...</p>
+              <p class="loading-text">Processing the data...</p>
             </div>
 
             <mat-card class="traffic-section" *ngIf="!isLoading && trafficData.length > 0">
               <mat-card-header>
                 <div style="text-align:center;">
-                  <mat-card-title>Risk Analysis</mat-card-title>
+                  <mat-card-title>Risk Analysis for {{changeData?.impactedCIs}}</mat-card-title>
                 </div>
               </mat-card-header>
               <mat-card-content>

@@ -54,7 +54,7 @@
           <ng-container matColumnDef="impactAnalysis">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Impact Analysis </th>
             <td mat-cell *matCellDef="let element">
-              <button mat-button color="primary" (click)="navigateToImpactAnalysis(element.number.value)">
+              <button mat-button color="primary" (click)="navigateToImpactAnalysis(element)">
                 <!-- [routerLink]="['/impact-analysis', element.number]" -->
                 <mat-icon>visibility</mat-icon>
                 View

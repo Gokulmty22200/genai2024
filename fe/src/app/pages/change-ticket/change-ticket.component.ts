@@ -61,7 +61,17 @@ export class ChangeTicketComponent {
       });
   }
 
-  navigateToImpactAnalysis(changeNumber: string) {
-    this.router.navigate(['/extra/impact-analysis']);
-  }
+  navigateToImpactAnalysis(changeData: any): void {
+    const navigationData = {
+      changeId: changeData.number?.value,
+      description: changeData.short_description?.value,
+      category: changeData.category?.value,
+      implementationDate: changeData.expected_start?.value,
+      impactedCIs: changeData.cmdb_ci?.display_value
+  };
+
+  this.router.navigate(['/extra/impact-analysis'], {
+      queryParams: { data: JSON.stringify(navigationData) }
+  });
+}
 }
