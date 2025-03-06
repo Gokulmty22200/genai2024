@@ -58,13 +58,13 @@ mat-expansion-panel {
   padding: 20px;
 }
 
-.traffic-section {
-  margin-top: 20px;
+// .traffic-section {
+//   margin-top: 20px;
   
-  .mat-mdc-card-header {
-    margin-bottom: 16px;
-  }
-}
+//   .mat-mdc-card-header {
+//     margin-bottom: 16px;
+//   }
+// }
 
 .traffic-grid {
   display: grid;
@@ -214,4 +214,48 @@ mat-divider {
 
 .loader-container {
   justify-items: center;
+}
+
+.traffic-section {
+  margin: 20px;
+
+  table {
+    width: 100%;
+  }
+
+  .checkmark-cell {
+    text-align: center;
+  }
+
+  .check-icon {
+    color: #4CAF50;
+  }
+
+  th.mat-header-cell {
+    text-align: center;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  td.mat-cell {
+    padding: 16px;
+  }
+}
+
+.cardWithShadow {
+  margin: 20px;
+
+  ::ng-deep .mat-tab-body-wrapper {
+    padding: 20px;
+  }
+
+  .ci-section {
+    margin-top: 20px;
+    
+    .placeholder-text {
+      text-align: center;
+      color: #666;
+      padding: 20px;
+    }
+  }
 }

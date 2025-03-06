@@ -31,6 +31,7 @@ export class ImpactAnalysisComponent implements OnInit {
   trafficData: any[] = [];
   isLoading = true;
   changeData: any;
+  selectedTab = 0;
   
   constructor(private ticketService: TicketService, private serviceNow : ServiceNowService, private route: ActivatedRoute ) {
     this.getRelationshipData();
@@ -165,5 +166,38 @@ export class ImpactAnalysisComponent implements OnInit {
       firewall: firewalls,
       selectedCI: selectedCIs
     }];
+  }
+
+  getUniqueTeams(): string[] {
+    return [...new Set(this.trafficData.map(item => item.team))];
+  }
+
+  getPortDataSource() {
+    const allPorts: any[] = [];
+    this.trafficData.forEach(teamData => {
+      teamData.records[0].port.forEach((port: any) => {
+        if (!allPorts.find(p => p.port === port.id)) {
+          allPorts.push({
+            port: port.id,
+            eventId: port.eventId.replace('Access over ', ''),
+            teams: [teamData.team]
+          });
+        } else {
+          const existingPort = allPorts.find(p => p.port === port.id);
+          if (!existingPort.teams.includes(teamData.team)) {
+            existingPort.teams.push(teamData.team);
+          }
+        }
+      });
+    });
+    return allPorts;
+  }
+
+  getDisplayedColumns(): string[] {
+    return ['port', ...this.getUniqueTeams()];
+  }
+
+  hasPortAccess(element: any, team: string): boolean {
+    return element.teams.includes(team);
   }
 }

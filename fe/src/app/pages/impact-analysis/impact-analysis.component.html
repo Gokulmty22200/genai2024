@@ -1,68 +1,66 @@
 <mat-card class="cardWithShadow">
-    <mat-card-content>
-      <!-- <mat-card-title>Impact Analysis</mat-card-title>
-      <div class="container">
-        <mat-card class="hierarchy-card"> -->
-          <!-- <mat-card-header> -->
-            <!-- <mat-card-title>Impact Analysis View</mat-card-title> -->
-          <!-- </mat-card-header> -->
-          <!-- <mat-card-content> -->
+  <mat-card-content>
+    <mat-tab-group [(selectedIndex)]="selectedTab">
+      <!-- Impacted Users Tab -->
+      <mat-tab label="Impacted Users">
+        <!-- Loader -->
+        <div class="loader-container" *ngIf="isLoading">
+          <mat-spinner diameter="50"></mat-spinner>
+          <p class="loading-text">Processing the data...</p>
+        </div>
 
-             <!-- Loader -->
-            <div class="loader-container" *ngIf="isLoading">
-              <mat-spinner diameter="50"></mat-spinner>
-              <p class="loading-text">Processing the data...</p>
+        <!-- Traffic Data Table -->
+        <mat-card class="traffic-section" *ngIf="!isLoading && trafficData.length > 0">
+          <mat-card-header>
+            <div style="text-align:center;">
+              <mat-card-title>Risk Analysis for {{changeData?.impactedCIs}}</mat-card-title>
             </div>
+          </mat-card-header>
+          <mat-card-content>
+            <table mat-table [dataSource]="getPortDataSource()" class="mat-elevation-z8">
+              <!-- Port Column -->
+              <ng-container matColumnDef="port">
+                <th mat-header-cell *matHeaderCellDef> Ports </th>
+                <td mat-cell *matCellDef="let element"> 
+                  Port {{element.port}} - {{element.eventId}} 
+                </td>
+              </ng-container>
+        
+              <!-- Team Columns (Dynamic) -->
+              <ng-container *ngFor="let team of getUniqueTeams()" [matColumnDef]="team">
+                <th mat-header-cell *matHeaderCellDef> {{team}} </th>
+                <td mat-cell *matCellDef="let element" class="checkmark-cell"> 
+                  <mat-icon *ngIf="hasPortAccess(element, team)" class="check-icon">check_circle</mat-icon>
+                </td>
+              </ng-container>
+        
+              <tr mat-header-row *matHeaderRowDef="getDisplayedColumns()"></tr>
+              <tr mat-row *matRowDef="let row; columns: getDisplayedColumns();"></tr>
+            </table>
+          </mat-card-content>
+        </mat-card>
 
-            <mat-card class="traffic-section" *ngIf="!isLoading && trafficData.length > 0">
-              <mat-card-header>
-                <div style="text-align:center;">
-                  <mat-card-title>Risk Analysis for {{changeData?.impactedCIs}}</mat-card-title>
-                </div>
-              </mat-card-header>
-              <mat-card-content>
-                <div class="team-grid">
-                  <mat-card class="team-card" *ngFor="let teamData of trafficData">
-                    <mat-card-header>
-                      <mat-card-title class="team-title">
-                        {{teamData.team}}
-                      </mat-card-title>
-                    </mat-card-header>
-                    <mat-divider></mat-divider>
-                    <mat-card-content>
-                      <div class="team-details">
-                        <!-- Port Details -->
-                        <div class="port-section">
-                          <div class="port-details" *ngFor="let port of teamData.records[0].port">
-                            <div class="port-item">
-                              <mat-icon>settings_ethernet</mat-icon>
-                              <span class="port-text">
-                                Port {{port.id}} - {{port.eventId.replace('Access over ', '')}}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-            
-                        <!-- Server Details -->
-                        <!-- <div class="server-section">
-                          <div class="server-details">
-                            <mat-icon>computer</mat-icon>
-                            <span class="server-name">{{teamData.records[0].ciName}}</span>
-                          </div>
-                        </div> -->
-                      </div>
-                    </mat-card-content>
-                  </mat-card>
-                </div>
-              </mat-card-content>
-            </mat-card>
+        <!-- No Data Message -->
+        <div class="no-data" *ngIf="!isLoading && trafficData.length === 0">
+          <mat-icon>info</mat-icon>
+          <p>No traffic data available</p>
+        </div>
+      </mat-tab>
 
-            <div class="no-data" *ngIf="!isLoading && trafficData.length === 0">
-              <mat-icon>info</mat-icon>
-              <p>No traffic data available</p>
-            </div>
-
-
+      <!-- Impacted CIs Tab -->
+      <mat-tab label="Impacted CIs">
+        <mat-card class="ci-section">
+          <mat-card-header>
+            <mat-card-title>Configuration Items Impact</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="placeholder-text">CI Impact analysis will be added here</p>
+          </mat-card-content>
+        </mat-card>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
             <!-- Level 1 - Firewalls -->
             <!-- <mat-expansion-panel expanded="true">
               <mat-expansion-panel-header>
@@ -204,5 +202,3 @@
           <!-- </mat-card-content> -->
         <!-- </mat-card>
       </div> -->
-    </mat-card-content>
-  </mat-card>
