@@ -6,6 +6,8 @@ import { TicketService } from '../../services/ticket.service';
 import { CI, IpTrafficData } from '../../interface/change-ticket.interface';
 import { ServiceNowService } from 'src/app/services/service-now.service';
 import { ActivatedRoute } from '@angular/router';
+import { ParentChildComponent } from "../parent-child/parent-child.component";
+import { AffectedCiComponent } from "../affected-ci/affected-ci.component";
 
 interface FirewallCI {
   operational_status: string;
@@ -22,19 +24,17 @@ interface FirewallCI {
 @Component({
   selector: 'app-impact-analysis',
   standalone: true,
-  imports: [CommonModule, MaterialModule],
+  imports: [CommonModule, MaterialModule, ParentChildComponent, AffectedCiComponent],
   templateUrl: './impact-analysis.component.html',
   styleUrl: './impact-analysis.component.scss'
 })
 export class ImpactAnalysisComponent implements OnInit {
-  hierarchyData: any;
   trafficData: any[] = [];
   isLoading = true;
   changeData: any;
   selectedTab = 0;
   
   constructor(private ticketService: TicketService, private serviceNow : ServiceNowService, private route: ActivatedRoute ) {
-    this.getRelationshipData();
   }
 
   ngOnInit() {
@@ -44,34 +44,10 @@ export class ImpactAnalysisComponent implements OnInit {
         console.log('Change Data:', this.changeData);
     }
     });
+    this.getIpData();
 }
 
-  getRelationshipData(): void {
-    this.serviceNow.getRelationshipData()
-      .subscribe({
-        next: (data: any) => {
-          console.log(data.result);
-          this.processRelationshipData(data.result);
-          this.getIpData();
-        },
-        error: (error: any) => {
-          console.error('Error fetching Relationship data:', error);
-        }
-      });
-  }
-
-  processRelationshipData(data: any): void {
-    this.ticketService.processRelationship(data)
-      .subscribe({
-        next: (response: any) => {
-          this.hierarchyData = response.data;
-          console.log(this.hierarchyData);
-        },
-        error: (error: any) => {
-          console.error('Error processing Relationship data:', error);
-        }
-      });
-  }
+  
 
   getIpData(): void {
     this.serviceNow.getIpData()
@@ -88,7 +64,7 @@ export class ImpactAnalysisComponent implements OnInit {
 
   getAffectedCI(data: CI[]): { 
     firewall: CI | null, selectedCI: CI | null } {
-    const selectedCIName = "Application Server 01";
+    const selectedCIName = this.changeData.impactedCIs;
     
     // Find firewall and selected CI details
     const firewall = data.find(ci => ci.name.toLowerCase().includes('firewall'));
@@ -103,7 +79,37 @@ export class ImpactAnalysisComponent implements OnInit {
   processIpData(data: { 
     firewall: CI | null, selectedCI: CI | null }): void {
     console.log('Sorted Ip',data);
-    const sortedValue = this.generateRandomCIData();
+    let modifiedData = [
+      {
+        "firewall": [
+          {
+            "operational_status": "1",
+            "managed_by": "",
+            "name": "Firewall",
+            "serial_number": "IW-WEB-FIREWALL-01",
+            "owned_by": "",
+            "ip_address": "10.0.70.1",
+            "install_date": "2025-02-06 09:38:04",
+            "model_id": "",
+            "managed_by_group": ""
+          }
+        ],
+        "selectedCI": [
+          {
+            "operational_status": "1",
+            "managed_by": "",
+            "name": "Application Server 12",
+            "serial_number": "APP-SERVER12-Icon-2025",
+            "owned_by": "",
+            "ip_address": "10.100.11.12",
+            "install_date": "2025-02-06 09:11:40",
+            "model_id": "",
+            "managed_by_group": ""
+          }
+        ]
+      }
+    ]
+    const sortedValue = data;
   this.isLoading = true;
   this.ticketService.processIpData(sortedValue)
   .subscribe({

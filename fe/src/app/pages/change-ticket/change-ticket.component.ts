@@ -67,7 +67,7 @@ export class ChangeTicketComponent {
       description: changeData.short_description?.value,
       category: changeData.category?.value,
       implementationDate: changeData.expected_start?.value,
-      impactedCIs: changeData.cmdb_ci?.display_value
+      impactedCIs: changeData.cmdb_ci?.display_value,
   };
 
   this.router.navigate(['/extra/impact-analysis'], {

@@ -1,0 +1,97 @@
+<div class="impact-analysis-container">
+    <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+  
+    <div *ngIf="!loading && !hasData" class="no-data">
+      <mat-icon>warning</mat-icon>
+      <p>No Impact Analysis data available to display</p>
+    </div>
+  
+    <div *ngIf="!loading && hasData && impactData" class="impact-content">
+      <!-- Change Details Card -->
+      <mat-card class="change-details">
+        <mat-card-header>
+          <mat-card-title>Change  {{impactData.changeDetails.changeId}}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p><strong>Description:</strong> {{impactData.changeDetails.description}}</p>
+          <p><strong>Category:</strong> {{impactData.changeDetails.category}}</p>
+          <p><strong>Affected CI:</strong> {{impactData.impactedCIs}}</p>
+          <!-- <mat-chip-set>
+            <mat-chip [style.background-color]="getSeverityColor(impactData.severity)">
+              Severity: {{impactData.severity}}
+            </mat-chip>
+          </mat-chip-set> -->
+        </mat-card-content>
+      </mat-card>
+  
+      <!-- Impact Analysis Cards -->
+      <div class="impact-grid">
+        <!-- Affected CI -->
+        <!-- <mat-card>
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>build_circle</mat-icon>
+              Affected CI
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="affected-ci">{{impactData.impactedCIs}}</p>
+          </mat-card-content>
+        </mat-card>
+   -->
+        <!-- Direct Impact -->
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>error</mat-icon>
+              Direct Impact
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-list>
+              <mat-list-item *ngFor="let ci of impactData.directImpact">
+                <mat-icon matListItemIcon>arrow_right</mat-icon>
+                {{ci}}
+              </mat-list-item>
+            </mat-list>
+          </mat-card-content>
+        </mat-card>
+  
+        <!-- Partial Impact -->
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>warning</mat-icon>
+              Partial Impact
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-list>
+              <mat-list-item *ngFor="let ci of impactData.partialImpact">
+                <mat-icon matListItemIcon>arrow_right</mat-icon>
+                {{ci}}
+              </mat-list-item>
+            </mat-list>
+          </mat-card-content>
+        </mat-card>
+  
+        <!-- Infrastructure Components -->
+        <!-- <mat-card>
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>router</mat-icon>
+              Infrastructure Components
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-list>
+              <mat-list-item *ngFor="let ci of impactData.infrastructureComponents">
+                <mat-icon matListItemIcon>arrow_right</mat-icon>
+                {{ci}}
+              </mat-list-item>
+            </mat-list>
+          </mat-card-content>
+        </mat-card> -->
+      </div>
+    </div>
+  </div>

@@ -1,8 +1,44 @@
 <mat-card class="cardWithShadow">
   <mat-card-content>
     <mat-tab-group [(selectedIndex)]="selectedTab">
+
+      <mat-tab label="Architecture Diagram">
+        <mat-card class="ci-section">
+          <mat-card-header>
+            
+            <!-- <mat-card-title>Architecture Diagram</mat-card-title> -->
+          </mat-card-header>
+          <mat-card-content>
+            <p class="placeholder-text"> <mat-icon>info</mat-icon>Not Available</p>
+          </mat-card-content>
+        </mat-card>
+      </mat-tab>
+
+      <mat-tab label="Parent Child Relationships">
+        <mat-card class="ci-section">
+          <mat-card-header>
+            <!-- <mat-card-title>Parent Child Relationships</mat-card-title> -->
+          </mat-card-header>
+          <mat-card-content>
+            <app-parent-child *ngIf="selectedTab === 1"></app-parent-child>
+          </mat-card-content>
+        </mat-card>
+      </mat-tab>
+
+      <!-- Impacted CIs Tab -->
+      <mat-tab label="Affected CIs">
+        <mat-card class="ci-section">
+          <mat-card-header>
+            <!-- <mat-card-title>Configuration Items Impact</mat-card-title> -->
+          </mat-card-header>
+          <mat-card-content>
+            <app-affected-ci *ngIf="selectedTab === 2"></app-affected-ci>
+          </mat-card-content>
+        </mat-card>
+      </mat-tab>
+      
       <!-- Impacted Users Tab -->
-      <mat-tab label="Impacted Users">
+      <mat-tab label="Affected Users">
         <!-- Loader -->
         <div class="loader-container" *ngIf="isLoading">
           <mat-spinner diameter="50"></mat-spinner>
@@ -13,7 +49,7 @@
         <mat-card class="traffic-section" *ngIf="!isLoading && trafficData.length > 0">
           <mat-card-header>
             <div style="text-align:center;">
-              <mat-card-title>Risk Analysis for {{changeData?.impactedCIs}}</mat-card-title>
+              <mat-card-title>Impact Analysis for {{changeData?.impactedCIs}}</mat-card-title>
             </div>
           </mat-card-header>
           <mat-card-content>
@@ -42,22 +78,11 @@
 
         <!-- No Data Message -->
         <div class="no-data" *ngIf="!isLoading && trafficData.length === 0">
-          <mat-icon>info</mat-icon>
-          <p>No traffic data available</p>
+          <p class="placeholder-text"><mat-icon>info</mat-icon>  No traffic data available</p>
         </div>
       </mat-tab>
 
-      <!-- Impacted CIs Tab -->
-      <mat-tab label="Impacted CIs">
-        <mat-card class="ci-section">
-          <mat-card-header>
-            <mat-card-title>Configuration Items Impact</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <p class="placeholder-text">CI Impact analysis will be added here</p>
-          </mat-card-content>
-        </mat-card>
-      </mat-tab>
+      
     </mat-tab-group>
   </mat-card-content>
 </mat-card>

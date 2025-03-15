@@ -1,0 +1,63 @@
+.relationship-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .no-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: #666;
+  
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 16px;
+    }
+  }
+  
+  .hierarchy-view {
+    h2 {
+      margin-bottom: 24px;
+      color: #333;
+    }
+  }
+  
+  .node-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  
+    .root-node {
+      font-weight: 500;
+      color: #1976d2;
+    }
+  
+    .leaf-node {
+      color: #666;
+    }
+  }
+  
+  .relationship-section {
+    margin: 16px 0;
+  
+    h3 {
+      margin-bottom: 12px;
+      color: #666;
+      font-size: 14px;
+    }
+  
+    mat-chip-list {
+      .mat-chip {
+        margin: 4px;
+      }
+    }
+  }
+  
+  mat-expansion-panel {
+    margin-bottom: 8px;
+  }

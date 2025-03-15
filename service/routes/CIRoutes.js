@@ -18,5 +18,6 @@ const checkCSVExists = (req, res, next) => {
 
 router.post('/processCIData', CIController.processCIData);
 router.post('/processIpData', checkCSVExists, CIController.processIpData);
+router.post('/processImpactedCI', CIController.impactedCI);
 
 module.exports = router;

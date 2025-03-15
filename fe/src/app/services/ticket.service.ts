@@ -38,4 +38,11 @@ export class TicketService {
     }
     return environment.appName;
   }
+
+  processImpactedCI(imapactData: any): Observable<any> {
+    const headers = new HttpHeaders()
+    .set('Content-Type', 'application/json');
+
+  return this.http.post(`${this.apiUrl}/ci/processImpactedCI`, imapactData, { headers });
+  }
 }
