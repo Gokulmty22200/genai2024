@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { MaterialModule } from 'src/app/material.module';
@@ -34,10 +34,11 @@ interface ImpactAnalysis {
   styleUrl: './affected-ci.component.scss'
 })
 export class AffectedCiComponent {
+  @Input() impactData: any;
 
   loading = false;
   hasData = false;
-  impactData?: ImpactAnalysis;
+  // impactData?: ImpactAnalysis;
   changeData: any;
 
   constructor(private ticketService: TicketService, private serviceNow : ServiceNowService, private route: ActivatedRoute ) {}
@@ -50,7 +51,7 @@ export class AffectedCiComponent {
           console.log('Change Data:', this.changeData);
       }
       });
-      this.getRelationshipData();
+      // this.getRelationshipData();
     }
   
     getRelationshipData(): void {

@@ -3,22 +3,72 @@ import { CommonModule } from '@angular/common';
 
 import { MaterialModule } from '../../material.module';
 import { TicketService } from '../../services/ticket.service';
-import { CI, IpTrafficData } from '../../interface/change-ticket.interface';
+import { CI } from '../../interface/change-ticket.interface';
 import { ServiceNowService } from 'src/app/services/service-now.service';
 import { ActivatedRoute } from '@angular/router';
 import { ParentChildComponent } from "../parent-child/parent-child.component";
 import { AffectedCiComponent } from "../affected-ci/affected-ci.component";
 
-interface FirewallCI {
-  operational_status: string;
-  managed_by: string;
-  name: string;
-  serial_number: string;
-  owned_by: string;
-  ip_address: string;
-  install_date: string;
-  model_id: string;
-  managed_by_group: string;
+interface Node {
+  id: string;
+  componentName: string;
+  children: string[];
+  parents: string[];
+}
+
+interface HierarchyResponse {
+  success: boolean;
+  message: string;
+  data: {
+    hierarchy: Node[];
+    metadata: {
+      totalComponents: number;
+      rootNodes: number;
+      leafNodes: number;
+    };
+  };
+}
+
+interface TrafficData {
+  teams: TeamData[];
+  metadata: {
+    totalTeams: number;
+    impactSummary: {
+      affected: number;
+      direct: number;
+      partial: number;
+    };
+    severity: string;
+  };
+  affectedCI: {
+    name: string;
+    category: string;
+    subcategory: string;
+  };
+}
+
+interface TeamData {
+  team: string;
+  records: {
+    deviceVendor: string[];
+    destination: string;
+    ports: PortData[];
+    ciName: string;
+    impactType: string;
+  }[];
+}
+
+interface PortData {
+  id: string;
+  eventId: string;
+}
+
+interface PortProtocolGroup {
+  protocol: string;
+  ports: {
+    id: string;
+    eventId: string;
+  }[];
 }
 
 @Component({
@@ -33,7 +83,14 @@ export class ImpactAnalysisComponent implements OnInit {
   isLoading = true;
   changeData: any;
   selectedTab = 0;
-  
+  imagePath = 'assets/images/architecture_diagram.png';
+  imageError = false;
+  relationshipData: any = null;
+  impactData: any = null
+  uniquePorts: { port: string; eventId: string; protocol: string }[] = [];
+  affectedCi: any = null;
+  protocolGroups: PortProtocolGroup[] = [];
+
   constructor(private ticketService: TicketService, private serviceNow : ServiceNowService, private route: ActivatedRoute ) {
   }
 
@@ -44,17 +101,15 @@ export class ImpactAnalysisComponent implements OnInit {
         console.log('Change Data:', this.changeData);
     }
     });
-    this.getIpData();
+    this.getRelationshipData();
 }
-
-  
 
   getIpData(): void {
     this.serviceNow.getIpData()
       .subscribe({
         next: (data: any) => {
           console.log(data.result);
-          this.processIpData(this.getAffectedCI(data.result));
+          this.getImpactAnalysis(this.getAffectedCI(data.result), this.relationshipData);
         },
         error: (error: any) => {
           console.error('Error fetching Ip data:', error);
@@ -63,115 +118,100 @@ export class ImpactAnalysisComponent implements OnInit {
   }
 
   getAffectedCI(data: CI[]): { 
-    firewall: CI | null, selectedCI: CI | null } {
+    firewall: CI | null, selectedCI: CI | null, otherCI: CI[] | null  } {
     const selectedCIName = this.changeData.impactedCIs;
     
     // Find firewall and selected CI details
     const firewall = data.find(ci => ci.name.toLowerCase().includes('firewall'));
     const selectedCI = data.find(ci => ci.name === selectedCIName);
+    const otherCI = data;
   
     return {
       firewall: firewall || null,
-      selectedCI: selectedCI || null
+      selectedCI: selectedCI || null,
+      otherCI: otherCI || null
     };
   }
 
-  processIpData(data: { 
-    firewall: CI | null, selectedCI: CI | null }): void {
-    console.log('Sorted Ip',data);
-    let modifiedData = [
-      {
-        "firewall": [
-          {
-            "operational_status": "1",
-            "managed_by": "",
-            "name": "Firewall",
-            "serial_number": "IW-WEB-FIREWALL-01",
-            "owned_by": "",
-            "ip_address": "10.0.70.1",
-            "install_date": "2025-02-06 09:38:04",
-            "model_id": "",
-            "managed_by_group": ""
-          }
-        ],
-        "selectedCI": [
-          {
-            "operational_status": "1",
-            "managed_by": "",
-            "name": "Application Server 12",
-            "serial_number": "APP-SERVER12-Icon-2025",
-            "owned_by": "",
-            "ip_address": "10.100.11.12",
-            "install_date": "2025-02-06 09:11:40",
-            "model_id": "",
-            "managed_by_group": ""
-          }
-        ]
-      }
-    ]
-    const sortedValue = data;
-  this.isLoading = true;
-  this.ticketService.processIpData(sortedValue)
-  .subscribe({
-    next: (response: any) => {
-      this.trafficData = response.data;
-      console.log(response);
-      this.isLoading = false;
-    },
-    error: (error: any) => {
-      console.error('Error processing Ip data:', error);
-      this.isLoading = false;
-    }
-  });
+  processIpData(): void {
+    this.isLoading = true;
+    this.ticketService.processIpData(this.impactData)
+      .subscribe({
+        next: (response: { data: TrafficData }) => {
+          this.trafficData = response.data.teams;
+          this.affectedCi = response.data.affectedCI;
+          console.log(this.trafficData,this.affectedCi,response.data.affectedCI)
+          this.setupPortData();
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error processing IP data:', error);
+          this.isLoading = false;
+        }
+      });
   }
 
-  private generateRandomCIData(): any[] {
-    const firewallIPs = ['10.0.60.1', '10.0.70.1'];
-    const ciIPs = ['10.100.11.11', '10.100.11.12', '10.100.11.13', '10.100.12.10'];
-    
-    // Randomly select number of firewalls (1 or 2)
-    const numFirewalls = Math.floor(Math.random() * 2) + 1;
-    // Randomly select number of CIs (1 to 4)
-    const numCIs = Math.floor(Math.random() * 4) + 1;
-    
-    // Randomly select firewall IPs
-    const selectedFirewallIPs = [...firewallIPs]
-      .sort(() => 0.5 - Math.random())
-      .slice(0, numFirewalls);
-      
-    // Randomly select CI IPs
-    const selectedCIIPs = [...ciIPs]
-      .sort(() => 0.5 - Math.random())
-      .slice(0, numCIs);
-  
-    const firewalls: FirewallCI[] = selectedFirewallIPs.map(ip => ({
-      operational_status: "1",
-      managed_by: "",
-      name: "Firewall",
-      serial_number: "",
-      owned_by: "",
-      ip_address: ip,
-      install_date: "2025-02-06 09:38:04",
-      model_id: "",
-      managed_by_group: ""
-    }));
-  
-    const selectedCIs: FirewallCI[] = selectedCIIPs.map(ip => ({
-      operational_status: "1",
-      managed_by: "",
-      name: `Application Server ${ip.split('.').pop()}`,
-      serial_number: `APP-SERVER${ip.split('.').pop()}-Icon-2025`,
-      owned_by: "",
-      ip_address: ip,
-      install_date: "2025-02-06 09:11:40",
-      model_id: "",
-      managed_by_group: ""
-    }));
-  
-    return [{
-      firewall: firewalls,
-      selectedCI: selectedCIs
-    }];
+  private setupPortData(): void {
+    const protocolMap = new Map<string, Set<string>>();
+    const portDetailsMap = new Map<string, { id: string; eventId: string; protocol: string }>();
+
+    // Collect all unique ports and their protocols
+    this.trafficData.forEach(team => {
+      team.records.forEach((record: any) => {
+        record.ports?.forEach((port: any) => {
+          if (port.id && port.protocol) {
+            const key = `${port.id}-${port.protocol}`;
+            if (!protocolMap.has(port.protocol)) {
+              protocolMap.set(port.protocol, new Set());
+            }
+            protocolMap.get(port.protocol)?.add(port.id);
+            portDetailsMap.set(key, {
+              id: port.id,
+              eventId: port.eventId || `${port.protocol} Access`,
+              protocol: port.protocol
+            });
+          }
+        });
+      });
+    });
+
+    // Convert to array format
+    this.protocolGroups = Array.from(protocolMap.entries()).map(([protocol, ports]) => ({
+      protocol,
+      ports: Array.from(ports).map(portId => {
+        const key = `${portId}-${protocol}`;
+        const details = portDetailsMap.get(key);
+        return {
+          id: portId,
+          eventId: details?.eventId || ''
+        };
+      }).sort((a, b) => Number(a.id) - Number(b.id))
+    })).sort((a, b) => a.protocol.localeCompare(b.protocol));
+
+    // Update uniquePorts for table display
+    this.uniquePorts = this.protocolGroups.flatMap(group => 
+      group.ports.map(port => ({
+        port: port.id,
+        eventId: port.eventId,
+        protocol: group.protocol
+      }))
+    );
+  }
+
+  getDisplayedColumns(): string[] {
+    return ['protocol', ...this.getUniqueTeams()];
+  }
+
+  hasPortAccess(element: any, team: string): boolean {
+    const teamData = this.trafficData.find(t => t.team === team);
+    if (!teamData) return false;
+
+    return teamData.records.some((record: any) => 
+      record.ports?.some((p: any) => 
+        p.id === element.port && 
+        p.protocol === element.protocol
+      )
+    );
   }
 
   getUniqueTeams(): string[] {
@@ -199,11 +239,62 @@ export class ImpactAnalysisComponent implements OnInit {
     return allPorts;
   }
 
-  getDisplayedColumns(): string[] {
-    return ['port', ...this.getUniqueTeams()];
+  handleImageError() {
+    this.imageError = true;
   }
 
-  hasPortAccess(element: any, team: string): boolean {
-    return element.teams.includes(team);
+  getRelationshipData(): void {
+    this.serviceNow.getRelationshipData()
+      .subscribe({
+        next: (data: any) => {
+          this.processRelationshipData(data.result);
+        },
+        error: (error: any) => {
+          console.error('Error fetching Relationship data:', error);
+        }
+      });
+  }
+
+  processRelationshipData(data: HierarchyResponse): void {
+    this.ticketService.processRelationship(data)
+      .subscribe({
+        next: (response) => {
+          if (response?.data?.hierarchy) {
+            // Share the processed data with child components
+            this.relationshipData = response.data;
+            this.getIpData();
+          }
+        },
+        error: (error) => {
+          console.error('Error processing relationship data:', error);
+        }
+      });
+  }
+
+  getImpactAnalysis(data: any, relationshipData: any): void {
+    const inputData = {affetcedCI: data, relationshipData: relationshipData };
+    this.ticketService.getImpactAnalysis(inputData)
+      .subscribe({
+        next: (response) => {
+          this.impactData = response.data;
+          console.log(response);
+          this.processIpData();
+        },
+        error: (error) => {
+          console.error('Error processing relationship data:', error);
+        }
+      });
+  }
+
+  getImpactTypeClass(team: string): string {
+    const record = this.trafficData
+      .find(t => t.team === team)?.records[0];
+    return record?.impactType || '';
+  }
+  
+  isNewProtocolGroup(row: any): boolean {
+    const index = this.uniquePorts.indexOf(row);
+    if (index === 0) return true;
+    return row.protocol !== this.uniquePorts[index - 1]?.protocol;
   }
 }

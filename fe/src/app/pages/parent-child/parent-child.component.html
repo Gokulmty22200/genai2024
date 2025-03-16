@@ -7,8 +7,6 @@
     </div>
   
     <div *ngIf="!loading && hasData" class="hierarchy-view">
-      <!-- <h2>Component Relationships</h2> -->
-  
       <mat-accordion class="nodes-accordion">
         <mat-expansion-panel *ngFor="let node of hierarchicalNodes">
           <mat-expansion-panel-header>
@@ -23,24 +21,32 @@
           </mat-expansion-panel-header>
   
           <!-- Parents Section -->
-          <div *ngIf="node.parents.length > 0" class="relationship-section">
+          <div *ngIf="getFilteredParents(node).length > 0" class="relationship-section">
             <h3>Upstream</h3>
             <mat-chip-set>
-            <mat-chip *ngFor="let parentId of node.parents" color="primary" selected>
-              {{ getComponentName(parentId) }}
-            </mat-chip>
+              <mat-chip *ngFor="let parentId of getFilteredParents(node)" color="primary" selected>
+                {{ getComponentName(parentId) }}
+              </mat-chip>
             </mat-chip-set>
           </div>
   
           <!-- Children Section -->
-          <div *ngIf="node.children.length > 0" class="relationship-section">
+          <div *ngIf="getFilteredChildren(node).length > 0" class="relationship-section">
             <h3>Downstream</h3>
-            <mat-chip-set >
-                @for (childId of node.children; track childId) {
-              <mat-chip color="accent" selected>
+            <mat-chip-set>
+              <mat-chip *ngFor="let childId of getFilteredChildren(node)" color="accent" selected>
                 {{ getComponentName(childId) }}
               </mat-chip>
-            }
+            </mat-chip-set>
+          </div>
+  
+          <!-- Associated Applications Section -->
+          <div *ngIf="shouldShowAssociatedApps(node)" class="relationship-section">
+            <h3>Associated Applications</h3>
+            <mat-chip-set>
+              <mat-chip *ngFor="let app of getRunsOnComponents(node)" color="warn" selected>
+                {{ app }}
+              </mat-chip>
             </mat-chip-set>
           </div>
         </mat-expansion-panel>

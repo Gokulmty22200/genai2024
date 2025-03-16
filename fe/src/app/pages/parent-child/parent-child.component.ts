@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 import { MaterialModule } from 'src/app/material.module';
 import { ServiceNowService } from 'src/app/services/service-now.service';
@@ -11,6 +11,11 @@ interface Node {
   componentName: string;
   children: string[];
   parents: string[];
+  relationships: { [key: string]: string };
+  runsOn: {
+    runsOnParents: string[];
+    runsOnChildren: string[];
+  };
 }
 
 interface HierarchyResponse {
@@ -34,7 +39,8 @@ interface HierarchyResponse {
   styleUrl: './parent-child.component.scss'
 })
 export class ParentChildComponent implements OnInit{
-  loading = true;
+  @Input() relationshipData: any;
+  loading = false;
   hasData = false;
   hierarchicalNodes: Node[] = [];
   componentMap = new Map<string, string>();
@@ -42,66 +48,34 @@ export class ParentChildComponent implements OnInit{
   constructor(private ticketService: TicketService, private serviceNow : ServiceNowService ) {}
 
   ngOnInit(): void {
-    this.getRelationshipData();
+    if (this.relationshipData) {
+      this.processData(this.relationshipData);
+    }
   }
 
-  getRelationshipData(): void {
-    this.loading = true;
-      this.serviceNow.getRelationshipData()
-        .subscribe({
-          next: (data: any) => {
-            console.log(data.result);
-            this.processRelationshipData(data.result);
-          },
-          error: (error: any) => {
-            console.error('Error fetching Relationship data:', error);
-          }
-        });
-    }
+  private processData(data: any): void {
+    try {
+      this.hierarchicalNodes = data.hierarchy;
+      
+      // Build component map
+      this.componentMap.clear();
+      this.hierarchicalNodes.forEach(node => {
+        this.componentMap.set(node.id, node.componentName);
+      });
 
-    processRelationshipData(data: HierarchyResponse): void {
-      this.loading = true;
-      this.ticketService.processRelationship(data)
-        .subscribe({
-          next: (response) => {
-            if (response?.data?.hierarchy) {
-              try {
-                this.hierarchicalNodes = response.data.hierarchy;
-                
-                // Build the component map first
-                this.componentMap.clear();
-                this.hierarchicalNodes.forEach(node => {
-                  this.componentMap.set(node.id, node.componentName);
-                });
-  
-                // Sort the nodes after mapping is complete
-                this.hierarchicalNodes = this.hierarchicalNodes.sort((a, b) => {
-                  if (a.parents.length === 0 && b.parents.length > 0) return -1;
-                  if (b.parents.length === 0 && a.parents.length > 0) return 1;
-                  return b.children.length - a.children.length;
-                });
-  
-                this.hasData = this.hierarchicalNodes.length > 0;
-                
-                // Debug logging
-                // console.log('Component Map:', Array.from(this.componentMap.entries()));
-                // console.log('Hierarchical Nodes:', this.hierarchicalNodes);
-              } catch (error) {
-                console.error('Error processing hierarchy:', error);
-                this.hasData = false;
-              }
-            } else {
-              this.hasData = false;
-            }
-            this.loading = false;
-          },
-          error: (error) => {
-            console.error('Error processing relationship data:', error);
-            this.hasData = false;
-            this.loading = false;
-          }
-        });
+      // Sort nodes
+      this.hierarchicalNodes = this.hierarchicalNodes.sort((a, b) => {
+        if (a.parents.length === 0 && b.parents.length > 0) return -1;
+        if (b.parents.length === 0 && a.parents.length > 0) return 1;
+        return b.children.length - a.children.length;
+      });
+
+      this.hasData = this.hierarchicalNodes.length > 0;
+    } catch (error) {
+      console.error('Error processing hierarchy data:', error);
+      this.hasData = false;
     }
+  }
   
     getComponentName(id: string): string {
       const name = this.componentMap.get(id);
@@ -118,4 +92,33 @@ export class ParentChildComponent implements OnInit{
     isLeafNode(node: Node): boolean {
       return node.children.length === 0;
     }
+
+    getFilteredParents(node: Node): string[] {
+      return node.parents.filter(parentId => 
+        !this.isRunsOnComponent(parentId, node)
+      );
     }
+  
+    getFilteredChildren(node: Node): string[] {
+      return node.children.filter(childId => 
+        !this.isRunsOnComponent(childId, node)
+      );
+    }
+  
+    getRunsOnComponents(node: Node): string[] {
+      return [
+        ...node.runsOn.runsOnParents,
+        ...node.runsOn.runsOnChildren
+      ];
+    }
+  
+    private isRunsOnComponent(componentId: string, node: Node): boolean {
+      const componentName = this.getComponentName(componentId);
+      return node.runsOn.runsOnParents.includes(componentName) || 
+             node.runsOn.runsOnChildren.includes(componentName);
+    }
+  
+    shouldShowAssociatedApps(node: Node): boolean {
+      return this.getRunsOnComponents(node).length > 0;
+    }
+  }

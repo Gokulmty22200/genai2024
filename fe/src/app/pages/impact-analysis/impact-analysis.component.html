@@ -9,76 +9,115 @@
             <!-- <mat-card-title>Architecture Diagram</mat-card-title> -->
           </mat-card-header>
           <mat-card-content>
-            <p class="placeholder-text"> <mat-icon>info</mat-icon>Not Available</p>
+            <div class="architecture-diagram" *ngIf="!imageError">
+              <img [src]="imagePath" 
+                   alt="Architecture Diagram" 
+                   (error)="handleImageError()"
+                   class="diagram-image">
+            </div>
+            <p class="placeholder-text" *ngIf="imageError">
+              <mat-icon>info</mat-icon>Image not available
+            </p>
           </mat-card-content>
         </mat-card>
       </mat-tab>
 
-      <mat-tab label="Parent Child Relationships">
+      <mat-tab label="Relationships">
         <mat-card class="ci-section">
           <mat-card-header>
             <!-- <mat-card-title>Parent Child Relationships</mat-card-title> -->
           </mat-card-header>
           <mat-card-content>
-            <app-parent-child *ngIf="selectedTab === 1"></app-parent-child>
+            <app-parent-child *ngIf="selectedTab === 1" [relationshipData]="relationshipData"></app-parent-child>>
           </mat-card-content>
         </mat-card>
       </mat-tab>
 
       <!-- Impacted CIs Tab -->
-      <mat-tab label="Affected CIs">
+      <mat-tab label="Affected CI's">
         <mat-card class="ci-section">
           <mat-card-header>
             <!-- <mat-card-title>Configuration Items Impact</mat-card-title> -->
           </mat-card-header>
           <mat-card-content>
-            <app-affected-ci *ngIf="selectedTab === 2"></app-affected-ci>
+            <app-affected-ci *ngIf="selectedTab === 2" [impactData]="impactData"></app-affected-ci>
           </mat-card-content>
         </mat-card>
       </mat-tab>
       
       <!-- Impacted Users Tab -->
-      <mat-tab label="Affected Users">
+      <mat-tab label="Affected User Groups">
         <!-- Loader -->
         <div class="loader-container" *ngIf="isLoading">
           <mat-spinner diameter="50"></mat-spinner>
           <p class="loading-text">Processing the data...</p>
         </div>
-
+      
         <!-- Traffic Data Table -->
-        <mat-card class="traffic-section" *ngIf="!isLoading && trafficData.length > 0">
+        <mat-card class="traffic-section" *ngIf="!isLoading && trafficData && trafficData.length > 0">
           <mat-card-header>
-            <div style="text-align:center;">
-              <mat-card-title>Impact Analysis for {{changeData?.impactedCIs}}</mat-card-title>
-            </div>
+            <mat-card-title>Impact Analysis for {{affectedCi?.name}}</mat-card-title>
+            <!-- <mat-card-subtitle>
+              Affected CI: {{affectedCi?.name || 'N/A'}}
+            </mat-card-subtitle> -->
           </mat-card-header>
+      
           <mat-card-content>
-            <table mat-table [dataSource]="getPortDataSource()" class="mat-elevation-z8">
-              <!-- Port Column -->
-              <ng-container matColumnDef="port">
-                <th mat-header-cell *matHeaderCellDef> Ports </th>
-                <td mat-cell *matCellDef="let element"> 
-                  Port {{element.port}} - {{element.eventId}} 
-                </td>
-              </ng-container>
-        
-              <!-- Team Columns (Dynamic) -->
-              <ng-container *ngFor="let team of getUniqueTeams()" [matColumnDef]="team">
-                <th mat-header-cell *matHeaderCellDef> {{team}} </th>
-                <td mat-cell *matCellDef="let element" class="checkmark-cell"> 
-                  <mat-icon *ngIf="hasPortAccess(element, team)" class="check-icon">check_circle</mat-icon>
-                </td>
-              </ng-container>
-        
-              <tr mat-header-row *matHeaderRowDef="getDisplayedColumns()"></tr>
-              <tr mat-row *matRowDef="let row; columns: getDisplayedColumns();"></tr>
-            </table>
+            <!-- Impact Type Legend -->
+            <!-- <div class="impact-legend">
+              <span class="legend-item">
+                <mat-icon class="affected">lens</mat-icon> Affected
+              </span>
+              <span class="legend-item">
+                <mat-icon class="direct">lens</mat-icon> Direct Impact
+              </span>
+              <span class="legend-item">
+                <mat-icon class="partial">lens</mat-icon> Partial Impact
+              </span>
+            </div> -->
+      
+            <div class="table-container">
+              <table mat-table [dataSource]="uniquePorts" class="mat-elevation-z8">
+                <!-- Protocol Column (Fixed) -->
+                <ng-container matColumnDef="protocol" sticky>
+                  <th mat-header-cell *matHeaderCellDef> Port / Protocol </th>
+                  <td mat-cell *matCellDef="let element"> 
+                    {{element.port}} / {{element.protocol}}
+                  </td>
+                </ng-container>
+            
+                <!-- Port Column (Fixed) -->
+                <!-- <ng-container matColumnDef="port" sticky>
+                  <th mat-header-cell *matHeaderCellDef> Port </th>
+                  <td mat-cell *matCellDef="let element"> 
+                    {{element.port}}
+                  </td>
+                </ng-container> -->
+            
+                <!-- Team Columns (Scrollable) -->
+                <ng-container *ngFor="let team of getUniqueTeams()" [matColumnDef]="team">
+                  <th mat-header-cell *matHeaderCellDef> {{team}} </th>
+                  <td mat-cell *matCellDef="let element" class="checkmark-cell">
+                    <mat-icon *ngIf="hasPortAccess(element, team)" class="affected">
+                      check_circle
+                    </mat-icon>
+                  </td>
+                </ng-container>
+            
+                <tr mat-header-row *matHeaderRowDef="getDisplayedColumns(); sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: getDisplayedColumns();"
+                    [class.protocol-group]="isNewProtocolGroup(row)"></tr>
+              </table>
+            </div>
           </mat-card-content>
         </mat-card>
-
+      
         <!-- No Data Message -->
-        <div class="no-data" *ngIf="!isLoading && trafficData.length === 0">
-          <p class="placeholder-text"><mat-icon>info</mat-icon>  No traffic data available</p>
+        <div class="no-data" *ngIf="!isLoading && !trafficData?.length">
+          <p class="placeholder-text">
+            <mat-icon>info</mat-icon>
+            No traffic data available
+          </p>
         </div>
       </mat-tab>
 

@@ -75,14 +75,14 @@ export const navItems: NavItem[] = [
   // },
   {
     displayName: 'Risk Analysis',
-    iconName: 'aperture',
-    bgcolor: 'error',
+    iconName: 'chart-dots',
+    bgcolor: 'primary',
     route: '/extra/change-ticket',
   },
   {
     displayName: 'Talk to Servicenow',
     iconName: 'aperture',
-    bgcolor: 'error',
+    bgcolor: 'primary',
     route: '/extra/chat-window',
   },
 ];

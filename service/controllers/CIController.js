@@ -5,12 +5,23 @@ const path = require('path');
 exports.processCIData = async (req, res) => {
     try {
         const ciData = req.body;
+        const validRelationshipTypes = [
+            'Runs on::Runs',
+            'Connects to::Connected by',
+            'Depends on::Used by',
+            'Hosted on::Hosts'
+        ];
         
-        // Create a map to store components and their relationships
+        // Create maps to store components and their relationships
         const componentMap = new Map();
+        const runsOnMap = new Map();  // New map for Runs on relationships
 
         // Initialize component map with empty arrays for parents and children
         ciData.forEach(relation => {
+            if (!validRelationshipTypes.includes(relation.type.name)) {
+                return;
+            }
+
             const { parent, child } = relation;
 
             if (!componentMap.has(parent.name)) {
@@ -18,7 +29,12 @@ exports.processCIData = async (req, res) => {
                     componentName: parent.name,
                     id: parent.value,
                     parents: new Set(),
-                    children: new Set()
+                    children: new Set(),
+                    relationships: new Map(),
+                    runsOn: {
+                        runsOnParents: new Set(),  // Components this one runs on
+                        runsOnChildren: new Set()   // Components that run on this
+                    }
                 });
             }
 
@@ -27,19 +43,33 @@ exports.processCIData = async (req, res) => {
                     componentName: child.name,
                     id: child.value,
                     parents: new Set(),
-                    children: new Set()
+                    children: new Set(),
+                    relationships: new Map(),
+                    runsOn: {
+                        runsOnParents: new Set(),
+                        runsOnChildren: new Set()
+                    }
                 });
             }
 
-            // Add parent-child relationships
             const parentComponent = componentMap.get(parent.name);
             const childComponent = componentMap.get(child.name);
 
-            // Skip IAM Role, Role, Cloudwatch, Cloud HSM, and S3 Bucket relationships
-            const excludedComponents = ['IAM Role', 'Role', 'Cloudwatch', 'Cloud HSM', 'S3 Bucket'];
+            // Skip utility components
+            const excludedComponents = ['IAM Role', 'Role', 'Cloudwatch', 'Cloud HSM', 'S3 Bucket', 'Active Directory services', 'Direct Connect', 'Route 53', 'VPN Nat Gateway', 'Internet Gateway'];
             if (!excludedComponents.includes(child.name)) {
                 parentComponent.children.add(child.name);
                 childComponent.parents.add(parent.name);
+                
+                // Store relationship type
+                parentComponent.relationships.set(child.name, relation.type.name);
+                childComponent.relationships.set(parent.name, relation.type.name);
+
+                // Handle Runs on relationships
+                if (relation.type.name === 'Runs on::Runs') {
+                    parentComponent.runsOn.runsOnChildren.add(child.name);
+                    childComponent.runsOn.runsOnParents.add(parent.name);
+                }
             }
         });
 
@@ -49,33 +79,57 @@ exports.processCIData = async (req, res) => {
                 componentName: component.componentName,
                 id: component.id,
                 parents: Array.from(component.parents),
-                children: Array.from(component.children)
+                children: Array.from(component.children),
+                relationships: Object.fromEntries(component.relationships),
+                runsOn: {
+                    runsOnParents: Array.from(component.runsOn.runsOnParents),
+                    runsOnChildren: Array.from(component.runsOn.runsOnChildren)
+                }
             }))
             .filter(component => {
-                // Filter out utility components
-                const excludedNames = ['IAM Role', 'Role', 'Cloudwatch', 'Cloud HSM', 'S3 Bucket'];
+                const excludedNames = ['IAM Role', 'Role', 'Cloudwatch', 'Cloud HSM', 'S3 Bucket', 'Active Directory services', 'Direct Connect', 'Route 53', 'VPN Nat Gateway', 'Internet Gateway'];
                 return !excludedNames.includes(component.componentName);
             });
 
-        // Sort components by hierarchy (root nodes first, leaf nodes last)
+        // Sort components
         const sortedComponents = components.sort((a, b) => {
-            // Root nodes (no parents) come first
             if (a.parents.length === 0 && b.parents.length > 0) return -1;
             if (b.parents.length === 0 && a.parents.length > 0) return 1;
             
-            // Then sort by number of children (more children = higher in hierarchy)
+            const aHasRunsOn = a.runsOn.runsOnChildren.length > 0;
+            const bHasRunsOn = b.runsOn.runsOnChildren.length > 0;
+            
+            if (aHasRunsOn && !bHasRunsOn) return -1;
+            if (!aHasRunsOn && bHasRunsOn) return 1;
+            
             return b.children.length - a.children.length;
         });
+
+        // Group components by relationship type
+        const groupedComponents = {
+            runningComponents: sortedComponents.filter(component => 
+                component.runsOn.runsOnChildren.length > 0 || component.runsOn.runsOnParents.length > 0
+            ),
+            connectedComponents: sortedComponents.filter(component => 
+                Object.values(component.relationships).some(type => type === 'Connects to::Connected by')
+            )
+        };
 
         res.status(200).json({
             success: true,
             message: 'CI data processed successfully',
             data: {
                 hierarchy: sortedComponents,
+                relationshipGroups: groupedComponents,
                 metadata: {
                     totalComponents: sortedComponents.length,
                     rootNodes: sortedComponents.filter(c => c.parents.length === 0).length,
-                    leafNodes: sortedComponents.filter(c => c.children.length === 0).length
+                    leafNodes: sortedComponents.filter(c => c.children.length === 0).length,
+                    runningComponents: groupedComponents.runningComponents.length,
+                    connectedComponents: groupedComponents.connectedComponents.length,
+                    runsOnRelationships: sortedComponents.reduce((acc, curr) => 
+                        acc + curr.runsOn.runsOnChildren.length, 0
+                    )
                 }
             }
         });
@@ -90,158 +144,52 @@ exports.processCIData = async (req, res) => {
     }
 };
 
-// exports.processIpData = async (req, res) => {
-//     try {
-//         const requestData = req.body;
-//         const teamRecords = new Map();
-        
-//         const filePath = path.join(__dirname, '../data/synthetic_data.csv');
-
-//         for (const item of requestData) {
-//             const { firewall, selectedCI } = item;
-//             const firewallIps = firewall.map(fw => fw.ip_address);
-//             const ciIps = selectedCI.map(ci => ci.ip_address);
-
-//             await new Promise((resolve, reject) => {
-//                 fs.createReadStream(filePath)
-//                     .pipe(csv())
-//                     .on('data', (record) => {
-//                         if (firewallIps.includes(record.DeviceVendor) && 
-//                             ciIps.includes(record.Destination)) {
-                            
-//                             const team = record.Team || 'Unassigned';
-//                             const key = `${team}-${record.Destination}`;
-
-//                             if (!teamRecords.has(key)) {
-//                                 teamRecords.set(key, {
-//                                     team,
-//                                     deviceVendor: new Set([record.DeviceVendor]),
-//                                     destination: new Set([record.Destination]),
-//                                     port: new Set([JSON.stringify({ id: record.Port, eventId: record.EventID })]),
-//                                     ciName: selectedCI.find(ci => ci.ip_address === record.Destination)?.name,
-//                                 });
-//                             } else {
-//                                 const existingRecord = teamRecords.get(key);
-//                                 existingRecord.deviceVendor.add(record.DeviceVendor);
-//                                 existingRecord.port.add(JSON.stringify({ id: record.Port, eventId: record.EventID }));
-//                             }
-//                         }
-//                     })
-//                     .on('end', () => resolve())
-//                     .on('error', (error) => reject(error));
-//             });
-//         }
-
-//         if (teamRecords.size === 0) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: 'No matching traffic records found',
-//                 data: []
-//             });
-//         }
-
-//         // Group by team and format response
-//         const groupedByTeam = Array.from(teamRecords.values()).reduce((acc, record) => {
-//             const existingTeam = acc.find(t => t.team === record.team);
-//             const formattedRecord = {
-//                 deviceVendor: Array.from(record.deviceVendor),
-//                 destination: Array.from(record.destination),
-//                 port: Array.from(record.port).map(p => JSON.parse(p)),
-//                 ciName: record.ciName
-//             };
-
-//             if (!existingTeam) {
-//                 acc.push({
-//                     team: record.team,
-//                     records: [formattedRecord]
-//                 });
-//             } else {
-//                 existingTeam.records.push(formattedRecord);
-//             }
-//             return acc;
-//         }, []);
-
-//         res.status(200).json({
-//             success: true,
-//             message: 'Traffic data retrieved successfully',
-//             data: groupedByTeam
-//         });
-
-//     } catch (error) {
-//         console.error('Error processing IP data:', error);
-//         res.status(500).json({
-//             success: false,
-//             message: 'Error processing IP data',
-//             error: error.message
-//         });
-//     }
-// };
-
 exports.processIpData = async (req, res) => {
     try {
-        // Normalize request data to use consistent structure
-        const requestData = Array.isArray(req.body) ? req.body : [req.body];
+        // Extract impact analysis data
+        const impactAnalysis = req.body;
         const teamRecords = new Map();
         
         const filePath = path.join(__dirname, '../data/syntheticData.csv');
 
-        for (const item of requestData) {
-            // Extract firewall and selectedCI from ServiceNow response format
-            const firewall = {
-                operational_status: item.firewall?.operational_status || '',
-                managed_by: item.firewall?.managed_by || '',
-                name: item.firewall?.name || '',
-                serial_number: item.firewall?.serial_number || '',
-                owned_by: item.firewall?.owned_by || '',
-                ip_address: item.firewall?.ip_address || '',
-                install_date: item.firewall?.sys_created_on || '',
-                model_id: item.firewall?.model_id?.value || '',
-                managed_by_group: item.firewall?.managed_by_group || ''
-            };
+        // Get all impacted IPs including affected, direct, and partial impacts
+        const impactedIPsList = impactAnalysis.impactedIPs.map(ip => ({
+            ip: ip.ip,
+            name: ip.component,
+            type: ip.impactType
+        }));
 
-            const selectedCI = {
-                operational_status: item.selectedCI?.operational_status || '',
-                managed_by: item.selectedCI?.managed_by || '',
-                name: item.selectedCI?.name || '',
-                serial_number: item.selectedCI?.serial_number || '',
-                owned_by: item.selectedCI?.owned_by || '',
-                ip_address: item.selectedCI?.ip_address || '',
-                install_date: item.selectedCI?.sys_created_on || '',
-                model_id: item.selectedCI?.model_id?.value || '',
-                managed_by_group: item.selectedCI?.managed_by_group || ''
-            };
-
-            // Skip if no valid IPs
-            if (!firewall.ip_address || !selectedCI.ip_address) {
-                continue;
-            }
-            // record.DeviceVendor === firewall.ip_address && 
+        // Process each impacted IP
+        for (const impactedIP of impactedIPsList) {
             await new Promise((resolve, reject) => {
                 fs.createReadStream(filePath)
                     .pipe(csv())
                     .on('data', (record) => {
-                        if (record.Destination === selectedCI.ip_address) {
-                            
+                        // Only check Destination column match
+                        if (record.Destination === impactedIP.ip) {
                             const team = record.Team || 'Unassigned';
-                            const key = `${team}-${record.Destination}`;
+                            const key = `${team}-${record.Destination}-${impactedIP.type}`;
 
                             if (!teamRecords.has(key)) {
                                 teamRecords.set(key, {
                                     team,
                                     deviceVendor: new Set([record.DeviceVendor]),
-                                    destination: new Set([record.Destination]),
-                                    port: new Set([JSON.stringify({ 
+                                    destination: record.Destination,
+                                    ports: new Set([JSON.stringify({ 
                                         id: record.Port, 
-                                        eventId: record.EventID 
+                                        eventId: record.EventID,
+                                        protocol: record.Protocol
                                     })]),
-                                    ciName: selectedCI.name
+                                    ciName: impactedIP.name,
+                                    impactType: impactedIP.type
                                 });
                             } else {
                                 const existingRecord = teamRecords.get(key);
                                 existingRecord.deviceVendor.add(record.DeviceVendor);
-                                existingRecord.port.add(JSON.stringify({ 
+                                existingRecord.ports.add(JSON.stringify({ 
                                     id: record.Port, 
-                                    eventId: record.EventID 
+                                    eventId: record.EventID,
+                                    protocol: record.Protocol
                                 }));
                             }
                         }
@@ -264,9 +212,10 @@ exports.processIpData = async (req, res) => {
             const existingTeam = acc.find(t => t.team === record.team);
             const formattedRecord = {
                 deviceVendor: Array.from(record.deviceVendor),
-                destination: Array.from(record.destination),
-                port: Array.from(record.port).map(p => JSON.parse(p)),
-                ciName: record.ciName
+                destination: record.destination,
+                ports: Array.from(record.ports).map(p => JSON.parse(p)),
+                ciName: record.ciName,
+                impactType: record.impactType
             };
 
             if (!existingTeam) {
@@ -280,11 +229,29 @@ exports.processIpData = async (req, res) => {
             return acc;
         }, []);
 
-        res.status(200).json({
+        const response = {
             success: true,
             message: 'Traffic data retrieved successfully',
-            data: groupedByTeam
-        });
+            data: {
+                teams: groupedByTeam,
+                metadata: {
+                    totalTeams: groupedByTeam.length,
+                    impactSummary: {
+                        affected: impactedIPsList.filter(ip => ip.type === 'affected').length,
+                        direct: impactedIPsList.filter(ip => ip.type === 'direct').length,
+                        partial: impactedIPsList.filter(ip => ip.type === 'partial').length
+                    },
+                    severity: impactAnalysis.severity
+                },
+                affectedCI: {
+                    name: impactAnalysis.details.affectedCIDetails.name,
+                    category: impactAnalysis.details.affectedCIDetails.category,
+                    subcategory: impactAnalysis.details.affectedCIDetails.subcategory
+                }
+            }
+        };
+
+        res.status(200).json(response);
 
     } catch (error) {
         console.error('Error processing IP data:', error);
@@ -390,6 +357,190 @@ exports.impactedCI = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error analyzing CI impact',
+            error: error.message
+        });
+    }
+};
+
+exports.analyzeImpact = async (req, res) => {
+    try {
+        const { affetcedCI, relationshipData } = req.body;
+        const selectedCI = affetcedCI.selectedCI;
+        const firewall = affetcedCI.firewall;
+        const otherCIs = affetcedCI.otherCI || [];
+        
+        // Create IP mapping from otherCIs
+        const ciIPMapping = new Map();
+        otherCIs.forEach(ci => {
+            if (ci.ip_address && ci.name) {
+                ciIPMapping.set(ci.name, ci.ip_address);
+            }
+        });
+        
+        // Get hierarchy data
+        const hierarchy = relationshipData.hierarchy;
+        
+        // Find the affected CI node
+        const affectedNode = hierarchy.find(node => node.componentName === selectedCI.name);
+        if (!affectedNode) {
+            return res.status(404).json({
+                success: false,
+                message: 'Affected CI not found in relationship data',
+                data: null
+            });
+        }
+
+        // Initialize impact sets
+        const directlyImpacted = new Set();
+        const partiallyImpacted = new Set();
+        const impactedIPs = new Map();
+
+        // Add selected CI's IP first
+        if (selectedCI.ip_address) {
+            impactedIPs.set(selectedCI.name, selectedCI.ip_address);
+        }
+
+        // Function to get component's IP
+        const getComponentIP = (componentName) => {
+            // Check if it's the selected CI first
+            if (componentName === selectedCI.name) {
+                return selectedCI.ip_address;
+            }
+            
+            // Check otherCIs mapping
+            if (ciIPMapping.has(componentName)) {
+                return ciIPMapping.get(componentName);
+            }
+
+            // Check if it's the firewall
+            if (componentName === firewall.name) {
+                return firewall.ip_address;
+            }
+
+            return null;
+        };
+
+        // Function to check if component is infrastructure
+        const isInfrastructureComponent = (name) => {
+            return ['Web Application Firewall', 'Application Load Balancer'].includes(name);
+        };
+
+        // Function to traverse up the hierarchy (only parents)
+        const traverseUpstream = (nodeName, isDirectImpact = false) => {
+            const node = hierarchy.find(n => n.componentName === nodeName);
+            if (!node) return;
+
+            node.parents.forEach(parentName => {
+                if (isInfrastructureComponent(parentName)) {
+                    return; // Stop at infrastructure components
+                }
+
+                const parentNode = hierarchy.find(n => n.componentName === parentName);
+                if (parentNode) {
+                    if (isDirectImpact) {
+                        partiallyImpacted.add(parentName);
+                        // For direct parents, continue traversing up
+                        traverseUpstream(parentName, false);
+                    } else {
+                        partiallyImpacted.add(parentName);
+                        // For indirect impacts, continue traversing up
+                        traverseUpstream(parentName, false);
+                    }
+
+                    // Get and store IP
+                    const ip = getComponentIP(parentName);
+                    if (ip) {
+                        impactedIPs.set(parentName, ip);
+                    }
+                }
+            });
+        };
+
+        // Function to traverse down (only immediate children)
+        const traverseDownstream = (nodeName, isDirectImpact = false) => {
+            const node = hierarchy.find(n => n.componentName === nodeName);
+            if (!node) return;
+
+            // Only process immediate children, no further traversal
+            node.children.forEach(childName => {
+                const childNode = hierarchy.find(n => n.componentName === childName);
+                if (childNode) {
+                    if (isDirectImpact) {
+                        directlyImpacted.add(childName);
+                    } else {
+                        partiallyImpacted.add(childName);
+                    }
+
+                    // Get and store IP
+                    const ip = getComponentIP(childName);
+                    if (ip) {
+                        impactedIPs.set(childName, ip);
+                    }
+                }
+            });
+        };
+
+        // Update the impact analysis logic
+        // Get direct impacts (immediate parents and children)
+        traverseUpstream(selectedCI.name, true);   // Traverse up for parents
+        traverseDownstream(selectedCI.name, true); // Only immediate children
+
+        // Remove directly impacted from partially impacted
+        directlyImpacted.forEach(name => partiallyImpacted.delete(name));
+        
+        // Calculate severity based on impact spread
+        let severity;
+        const totalImpact = directlyImpacted.size + partiallyImpacted.size;
+        if (totalImpact > 8) {
+            severity = 'HIGH';
+        } else if (totalImpact > 4) {
+            severity = 'MEDIUM';
+        } else {
+            severity = 'LOW';
+        }
+
+        const response = {
+            success: true,
+            message: 'Impact analysis completed successfully',
+            data: {
+                affectedCI: selectedCI.name,
+                directImpact: Array.from(directlyImpacted),
+                partialImpact: Array.from(partiallyImpacted),
+                impactedIPs: Array.from(impactedIPs.entries()).map(([component, ip]) => ({
+                    component,
+                    ip,
+                    impactType: component === selectedCI.name ? 'affected' : 
+                              directlyImpacted.has(component) ? 'direct' : 'partial'
+                })),
+                metadata: {
+                    totalComponents: totalImpact,
+                    directlyImpactedCount: directlyImpacted.size,
+                    partiallyImpactedCount: partiallyImpacted.size,
+                    impactedIPsCount: impactedIPs.size
+                },
+                severity,
+                details: {
+                    affectedCIDetails: {
+                        name: selectedCI.name,
+                        ip: selectedCI.ip_address,
+                        category: selectedCI.category,
+                        subcategory: selectedCI.subcategory
+                    },
+                    firewallDetails: {
+                        name: firewall.name,
+                        ip: firewall.ip_address
+                    }
+                }
+            }
+        };
+
+        res.status(200).json(response);
+
+    } catch (error) {
+        console.error('Error analyzing impact:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error analyzing impact',
             error: error.message
         });
     }

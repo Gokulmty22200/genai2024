@@ -45,4 +45,11 @@ export class TicketService {
 
   return this.http.post(`${this.apiUrl}/ci/processImpactedCI`, imapactData, { headers });
   }
+
+  getImpactAnalysis(imapactData: any): Observable<any> {
+    const headers = new HttpHeaders()
+    .set('Content-Type', 'application/json');
+
+  return this.http.post(`${this.apiUrl}/ci/analyzeImpact`, imapactData, { headers });
+  }
 }

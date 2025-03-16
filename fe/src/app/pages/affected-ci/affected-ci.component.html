@@ -1,21 +1,21 @@
 <div class="impact-analysis-container">
-    <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+    <mat-progress-bar *ngIf="!impactData" mode="indeterminate"></mat-progress-bar>
   
-    <div *ngIf="!loading && !hasData" class="no-data">
+    <div *ngIf="!loading && !impactData" class="no-data">
       <mat-icon>warning</mat-icon>
       <p>No Impact Analysis data available to display</p>
     </div>
   
-    <div *ngIf="!loading && hasData && impactData" class="impact-content">
+    <div *ngIf="!loading && impactData" class="impact-content">
       <!-- Change Details Card -->
       <mat-card class="change-details">
         <mat-card-header>
-          <mat-card-title>Change  {{impactData.changeDetails.changeId}}</mat-card-title>
+          <mat-card-title>Change  {{changeData.changeId}}</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <p><strong>Description:</strong> {{impactData.changeDetails.description}}</p>
-          <p><strong>Category:</strong> {{impactData.changeDetails.category}}</p>
-          <p><strong>Affected CI:</strong> {{impactData.impactedCIs}}</p>
+          <p><strong>Description:</strong> {{changeData.description}}</p>
+          <p><strong>Category:</strong> {{changeData.category}}</p>
+          <p><strong>Affected CI:</strong> {{changeData.impactedCIs}}</p>
           <!-- <mat-chip-set>
             <mat-chip [style.background-color]="getSeverityColor(impactData.severity)">
               Severity: {{impactData.severity}}
@@ -44,7 +44,7 @@
           <mat-card-header>
             <mat-card-title>
               <mat-icon>error</mat-icon>
-              Direct Impact
+              Affected CI's
             </mat-card-title>
           </mat-card-header>
           <mat-card-content>
@@ -62,7 +62,7 @@
           <mat-card-header>
             <mat-card-title>
               <mat-icon>warning</mat-icon>
-              Partial Impact
+              Partially Affected CI's
             </mat-card-title>
           </mat-card-header>
           <mat-card-content>
