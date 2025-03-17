@@ -56,10 +56,9 @@
         <!-- Traffic Data Table -->
         <mat-card class="traffic-section" *ngIf="!isLoading && trafficData && trafficData.length > 0">
           <mat-card-header>
-            <mat-card-title>Impact Analysis for {{affectedCi?.name}}</mat-card-title>
-            <!-- <mat-card-subtitle>
-              Affected CI: {{affectedCi?.name || 'N/A'}}
-            </mat-card-subtitle> -->
+            <mat-card-title>
+              Impact Analysis for {{ affectedCi?.length ? affectedCi.join(', ') : '' }}
+            </mat-card-title>
           </mat-card-header>
       
           <mat-card-content>

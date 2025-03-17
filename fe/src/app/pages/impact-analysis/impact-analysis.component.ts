@@ -40,11 +40,11 @@ interface TrafficData {
     };
     severity: string;
   };
-  affectedCI: {
+  affectedCIs: [{
     name: string;
     category: string;
     subcategory: string;
-  };
+  }];
 }
 
 interface TeamData {
@@ -101,7 +101,8 @@ export class ImpactAnalysisComponent implements OnInit {
         console.log('Change Data:', this.changeData);
     }
     });
-    this.getRelationshipData();
+    this.getImpactedCIs();
+    // this.getRelationshipData();
 }
 
   getIpData(): void {
@@ -117,18 +118,50 @@ export class ImpactAnalysisComponent implements OnInit {
       });
   }
 
+  getImpactedCIs(){
+    this.serviceNow.getImpactedCIs()
+      .subscribe({
+        next: (data: { result: any }) => {
+          if (!this.changeData) {
+            this.changeData = {};
+          }
+          
+          // Extract CI names from response and store in changeData
+          this.changeData.impactedCIs = {
+            result: data.result.map((item: any) => ({
+              ci_item: {
+                display_value: item.ci_item.display_value,
+                link: item.ci_item.link,
+                value: item.ci_item.value
+              }
+            }))
+          };
+
+          console.log('Impacted CIs:', this.changeData.impactedCIs);
+          
+          // Proceed with getting relationship data if needed
+          this.getRelationshipData();
+        },
+        error: (error: any) => {
+          console.error('Error fetching Impacted CIs:', error);
+        }
+      });
+  }
+
   getAffectedCI(data: CI[]): { 
-    firewall: CI | null, selectedCI: CI | null, otherCI: CI[] | null  } {
-    const selectedCIName = this.changeData.impactedCIs;
+    firewall: CI | null, selectedCI: CI[] | null, otherCI: CI[] | null  } {
+      const selectedCINames = this.changeData.impactedCIs.result
+      .map((item: any) => item.ci_item.display_value);
     
     // Find firewall and selected CI details
     const firewall = data.find(ci => ci.name.toLowerCase().includes('firewall'));
-    const selectedCI = data.find(ci => ci.name === selectedCIName);
-    const otherCI = data;
+    const selectedCIs = data.filter(ci => selectedCINames.includes(ci.name));
+    const otherCI = data
+  
   
     return {
       firewall: firewall || null,
-      selectedCI: selectedCI || null,
+      selectedCI: selectedCIs || null,
       otherCI: otherCI || null
     };
   }
@@ -139,8 +172,7 @@ export class ImpactAnalysisComponent implements OnInit {
       .subscribe({
         next: (response: { data: TrafficData }) => {
           this.trafficData = response.data.teams;
-          this.affectedCi = response.data.affectedCI;
-          console.log(this.trafficData,this.affectedCi,response.data.affectedCI)
+          this.affectedCi = this.impactData.affectedCIs;
           this.setupPortData();
           this.isLoading = false;
         },

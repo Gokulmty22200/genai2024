@@ -69,4 +69,15 @@ export class ServiceNowService {
   const url = `${this.serviceNowUrl}/cmdb_ci?${this.queryParams}`;
   return this.http.get<any>(url, { headers });
   }
+
+  getImpactedCIs(): Observable<any> {
+    this.queryParams = 'sysparm_query=task%3Db1f6054583d022101767e270ceaad319&sysparm_fields=applied%2Csys_mod_count%2Csys_updated_on%2Csys_tags%2Cci_item%2Capplied_date%2Csys_id%2Ctask%2Csys_updated_by%2Cxml%2Csys_created_on%2Csys_created_by%2Cmanual_proposed_change%2Cadded_from_dynamic_ci&sysparm_display_value=all';
+    const headers = new HttpHeaders()
+    .set('Authorization', 'Basic ' + btoa('Virtusaicon:Virtusa25@'))
+    .set('Accept', 'application/json')
+    .set('Content-Type', 'application/json');
+
+  const url = `${this.serviceNowUrl}/task_ci?${this.queryParams}`;
+  return this.http.get<any>(url, { headers });
+  }
 }

@@ -365,54 +365,29 @@ exports.impactedCI = async (req, res) => {
 exports.analyzeImpact = async (req, res) => {
     try {
         const { affetcedCI, relationshipData } = req.body;
-        const selectedCI = affetcedCI.selectedCI;
+        const selectedCIs = affetcedCI.selectedCI;
         const firewall = affetcedCI.firewall;
         const otherCIs = affetcedCI.otherCI || [];
-        
-        // Create IP mapping from otherCIs
-        const ciIPMapping = new Map();
-        otherCIs.forEach(ci => {
-            if (ci.ip_address && ci.name) {
-                ciIPMapping.set(ci.name, ci.ip_address);
-            }
-        });
         
         // Get hierarchy data
         const hierarchy = relationshipData.hierarchy;
         
-        // Find the affected CI node
-        const affectedNode = hierarchy.find(node => node.componentName === selectedCI.name);
-        if (!affectedNode) {
-            return res.status(404).json({
-                success: false,
-                message: 'Affected CI not found in relationship data',
-                data: null
-            });
-        }
-
-        // Initialize impact sets
+        // Initialize impact sets for all CIs
         const directlyImpacted = new Set();
         const partiallyImpacted = new Set();
         const impactedIPs = new Map();
 
-        // Add selected CI's IP first
-        if (selectedCI.ip_address) {
-            impactedIPs.set(selectedCI.name, selectedCI.ip_address);
-        }
-
-        // Function to get component's IP
+        // Helper functions first
         const getComponentIP = (componentName) => {
-            // Check if it's the selected CI first
-            if (componentName === selectedCI.name) {
+            const selectedCI = selectedCIs.find(ci => ci.name === componentName);
+            if (selectedCI?.ip_address) {
                 return selectedCI.ip_address;
             }
             
-            // Check otherCIs mapping
             if (ciIPMapping.has(componentName)) {
                 return ciIPMapping.get(componentName);
             }
 
-            // Check if it's the firewall
             if (componentName === firewall.name) {
                 return firewall.ip_address;
             }
@@ -420,34 +395,29 @@ exports.analyzeImpact = async (req, res) => {
             return null;
         };
 
-        // Function to check if component is infrastructure
         const isInfrastructureComponent = (name) => {
             return ['Web Application Firewall', 'Application Load Balancer'].includes(name);
         };
 
-        // Function to traverse up the hierarchy (only parents)
         const traverseUpstream = (nodeName, isDirectImpact = false) => {
             const node = hierarchy.find(n => n.componentName === nodeName);
             if (!node) return;
 
             node.parents.forEach(parentName => {
                 if (isInfrastructureComponent(parentName)) {
-                    return; // Stop at infrastructure components
+                    return;
                 }
 
                 const parentNode = hierarchy.find(n => n.componentName === parentName);
                 if (parentNode) {
                     if (isDirectImpact) {
                         partiallyImpacted.add(parentName);
-                        // For direct parents, continue traversing up
                         traverseUpstream(parentName, false);
                     } else {
                         partiallyImpacted.add(parentName);
-                        // For indirect impacts, continue traversing up
                         traverseUpstream(parentName, false);
                     }
 
-                    // Get and store IP
                     const ip = getComponentIP(parentName);
                     if (ip) {
                         impactedIPs.set(parentName, ip);
@@ -456,12 +426,10 @@ exports.analyzeImpact = async (req, res) => {
             });
         };
 
-        // Function to traverse down (only immediate children)
         const traverseDownstream = (nodeName, isDirectImpact = false) => {
             const node = hierarchy.find(n => n.componentName === nodeName);
             if (!node) return;
 
-            // Only process immediate children, no further traversal
             node.children.forEach(childName => {
                 const childNode = hierarchy.find(n => n.componentName === childName);
                 if (childNode) {
@@ -471,7 +439,6 @@ exports.analyzeImpact = async (req, res) => {
                         partiallyImpacted.add(childName);
                     }
 
-                    // Get and store IP
                     const ip = getComponentIP(childName);
                     if (ip) {
                         impactedIPs.set(childName, ip);
@@ -480,15 +447,30 @@ exports.analyzeImpact = async (req, res) => {
             });
         };
 
-        // Update the impact analysis logic
-        // Get direct impacts (immediate parents and children)
-        traverseUpstream(selectedCI.name, true);   // Traverse up for parents
-        traverseDownstream(selectedCI.name, true); // Only immediate children
+        // Create IP mapping
+        const ciIPMapping = new Map();
+        otherCIs.forEach(ci => {
+            if (ci.ip_address && ci.name) {
+                ciIPMapping.set(ci.name, ci.ip_address);
+            }
+        });
 
+        // Process each selected CI
+        for (const selectedCI of selectedCIs) {
+            const affectedNode = hierarchy.find(node => node.componentName === selectedCI.name);
+            if (!affectedNode) continue;
+
+            if (selectedCI.ip_address) {
+                impactedIPs.set(selectedCI.name, selectedCI.ip_address);
+            }
+
+            traverseUpstream(selectedCI.name, true);
+            traverseDownstream(selectedCI.name, true);
+        }
         // Remove directly impacted from partially impacted
         directlyImpacted.forEach(name => partiallyImpacted.delete(name));
         
-        // Calculate severity based on impact spread
+        // Calculate severity based on total impact
         let severity;
         const totalImpact = directlyImpacted.size + partiallyImpacted.size;
         if (totalImpact > 8) {
@@ -503,29 +485,30 @@ exports.analyzeImpact = async (req, res) => {
             success: true,
             message: 'Impact analysis completed successfully',
             data: {
-                affectedCI: selectedCI.name,
+                affectedCIs: selectedCIs.map(ci => ci.name), // Array of affected CI names
                 directImpact: Array.from(directlyImpacted),
                 partialImpact: Array.from(partiallyImpacted),
                 impactedIPs: Array.from(impactedIPs.entries()).map(([component, ip]) => ({
                     component,
                     ip,
-                    impactType: component === selectedCI.name ? 'affected' : 
+                    impactType: selectedCIs.some(ci => ci.name === component) ? 'affected' : 
                               directlyImpacted.has(component) ? 'direct' : 'partial'
                 })),
                 metadata: {
                     totalComponents: totalImpact,
                     directlyImpactedCount: directlyImpacted.size,
                     partiallyImpactedCount: partiallyImpacted.size,
-                    impactedIPsCount: impactedIPs.size
+                    impactedIPsCount: impactedIPs.size,
+                    affectedCICount: selectedCIs.length
                 },
                 severity,
                 details: {
-                    affectedCIDetails: {
-                        name: selectedCI.name,
-                        ip: selectedCI.ip_address,
-                        category: selectedCI.category,
-                        subcategory: selectedCI.subcategory
-                    },
+                    affectedCIDetails: selectedCIs.map(ci => ({
+                        name: ci.name,
+                        ip: ci.ip_address,
+                        category: ci.category,
+                        subcategory: ci.subcategory
+                    })),
                     firewallDetails: {
                         name: firewall.name,
                         ip: firewall.ip_address
