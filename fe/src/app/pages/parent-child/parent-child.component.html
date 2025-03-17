@@ -42,7 +42,12 @@
   
           <!-- Associated Applications Section -->
           <div *ngIf="shouldShowAssociatedApps(node)" class="relationship-section">
-            <h3>Associated Applications</h3>
+            @if(node.componentName === 'IDEAWORKS application'){
+              <h3>Runs On</h3>
+
+            }@else {
+              <h3>Associated Applications</h3>
+            }
             <mat-chip-set>
               <mat-chip *ngFor="let app of getRunsOnComponents(node)" color="warn" selected>
                 {{ app }}
