@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { MaterialModule } from '../../material.module';
 import { TicketService } from '../../services/ticket.service';
 import { ServiceNowService } from 'src/app/services/service-now.service';
+import { map, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-change-ticket',
@@ -50,13 +51,39 @@ export class ChangeTicketComponent {
 
   getChangeTicketData(): void {
     this.serviceNow.getChangeTicketData()
+      .pipe(
+        switchMap((ticketData: any) => {
+          // First store the ticket data
+          const tickets = ticketData.result;
+          
+          // Then get impacted CIs
+          return this.serviceNow.getImpactedCIs().pipe(
+            map(impactedCIsResponse => {
+              // Format CI names
+              const ciNames = impactedCIsResponse.result
+                .map((ci: any) => ci.ci_item.display_value)
+                .join(', ');
+  
+              // Update ticket data with CI names
+              return tickets.map((ticket: any) => ({
+                ...ticket,
+                cmdb_ci: {
+                  ...ticket.cmdb_ci,
+                  display_value: ciNames
+                }
+              }));
+            })
+          );
+        })
+      )
       .subscribe({
-        next: (data: any) => {
-          console.log(data.result);
-          this.dataSource.data = data.result;
+        next: (processedData: any) => {
+          this.dataSource.data = processedData;
+          this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
         },
         error: (error: any) => {
-          console.error('Error fetching change tickets:', error);
+          console.error('Error fetching data:', error);
         }
       });
   }
