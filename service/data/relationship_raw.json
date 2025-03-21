@@ -1,0 +1,1528 @@
+[
+    {
+      "parent": {
+        "name": "VPN Gateway",
+        "value": "eae4f9d0831022101767e270ceaad367"
+      },
+      "child": {
+        "name": "Bastion Host",
+        "value": "4bfa791c831022101767e270ceaad32c"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Direct Connect",
+        "value": "6235fd54831022101767e270ceaad3e8"
+      },
+      "child": {
+        "name": "Bastion Host",
+        "value": "4bfa791c831022101767e270ceaad32c"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application Firewall",
+        "value": "396671d4831022101767e270ceaad363"
+      },
+      "child": {
+        "name": "Internet Gateway",
+        "value": "65a675d4831022101767e270ceaad34d"
+      },
+      "type": {
+        "name": "Connects to::Connected by",
+        "value": "5599a965c0a8010e00da3b58b113d70e"
+      }
+    },
+    {
+      "parent": {
+        "name": "Internet Gateway",
+        "value": "65a675d4831022101767e270ceaad34d"
+      },
+      "child": {
+        "name": "Application Load Balancer",
+        "value": "1cc6b5d4831022101767e270ceaad316"
+      },
+      "type": {
+        "name": "Connects to::Connected by",
+        "value": "5599a965c0a8010e00da3b58b113d70e"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application Firewall",
+        "value": "396671d4831022101767e270ceaad363"
+      },
+      "child": {
+        "name": "Internet Gateway",
+        "value": "65a675d4831022101767e270ceaad34d"
+      },
+      "type": {
+        "name": "Connects to::Connected by",
+        "value": "5599a965c0a8010e00da3b58b113d70e"
+      }
+    },
+    {
+      "parent": {
+        "name": "Internet Gateway",
+        "value": "65a675d4831022101767e270ceaad34d"
+      },
+      "child": {
+        "name": "VPN Nat Gateway",
+        "value": "17d67dd4831022101767e270ceaad3f2"
+      },
+      "type": {
+        "name": "Connects to::Connected by",
+        "value": "5599a965c0a8010e00da3b58b113d70e"
+      }
+    },
+    {
+      "parent": {
+        "name": "Bastion Host",
+        "value": "4bfa791c831022101767e270ceaad32c"
+      },
+      "child": {
+        "name": "Application Load Balancer",
+        "value": "1cc6b5d4831022101767e270ceaad316"
+      },
+      "type": {
+        "name": "Hosted on::Hosts",
+        "value": "5f985e0ec0a8010e00a9714f2a172815"
+      }
+    },
+    {
+      "parent": {
+        "name": "Application Load Balancer",
+        "value": "1cc6b5d4831022101767e270ceaad316"
+      },
+      "child": {
+        "name": "Web Application 01",
+        "value": "126bb55c831022101767e270ceaad3ab"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Application Load Balancer",
+        "value": "1cc6b5d4831022101767e270ceaad316"
+      },
+      "child": {
+        "name": "Web Application 02",
+        "value": "01bbb95c831022101767e270ceaad3fa"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application 01",
+        "value": "126bb55c831022101767e270ceaad3ab"
+      },
+      "child": {
+        "name": "Middleware Application 01",
+        "value": "bc2cf15c831022101767e270ceaad316"
+      },
+      "type": {
+        "name": "Connects to::Connected by",
+        "value": "5599a965c0a8010e00da3b58b113d70e"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application 01",
+        "value": "126bb55c831022101767e270ceaad3ab"
+      },
+      "child": {
+        "name": "Middleware Application 02",
+        "value": "a05c719c831022101767e270ceaad3a7"
+      },
+      "type": {
+        "name": "Connects to::Connected by",
+        "value": "5599a965c0a8010e00da3b58b113d70e"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application 02",
+        "value": "01bbb95c831022101767e270ceaad3fa"
+      },
+      "child": {
+        "name": "Middleware Application 01",
+        "value": "bc2cf15c831022101767e270ceaad316"
+      },
+      "type": {
+        "name": "Connects to::Connected by",
+        "value": "5599a965c0a8010e00da3b58b113d70e"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application 02",
+        "value": "01bbb95c831022101767e270ceaad3fa"
+      },
+      "child": {
+        "name": "Middleware Application 02",
+        "value": "a05c719c831022101767e270ceaad3a7"
+      },
+      "type": {
+        "name": "Connects to::Connected by",
+        "value": "5599a965c0a8010e00da3b58b113d70e"
+      }
+    },
+    {
+      "parent": {
+        "name": "Middleware Application 01",
+        "value": "bc2cf15c831022101767e270ceaad316"
+      },
+      "child": {
+        "name": "Database Server 01",
+        "value": "ae7c7d5c831022101767e270ceaad313"
+      },
+      "type": {
+        "name": "Connects to::Connected by",
+        "value": "5599a965c0a8010e00da3b58b113d70e"
+      }
+    },
+    {
+      "parent": {
+        "name": "Middleware Application 01",
+        "value": "bc2cf15c831022101767e270ceaad316"
+      },
+      "child": {
+        "name": "Database Server 02",
+        "value": "61acf19c831022101767e270ceaad3f3"
+      },
+      "type": {
+        "name": "Connects to::Connected by",
+        "value": "5599a965c0a8010e00da3b58b113d70e"
+      }
+    },
+    {
+      "parent": {
+        "name": "Middleware Application 02",
+        "value": "a05c719c831022101767e270ceaad3a7"
+      },
+      "child": {
+        "name": "Database Server 01",
+        "value": "ae7c7d5c831022101767e270ceaad313"
+      },
+      "type": {
+        "name": "Connects to::Connected by",
+        "value": "5599a965c0a8010e00da3b58b113d70e"
+      }
+    },
+    {
+      "parent": {
+        "name": "Middleware Application 02",
+        "value": "a05c719c831022101767e270ceaad3a7"
+      },
+      "child": {
+        "name": "Database Server 02",
+        "value": "61acf19c831022101767e270ceaad3f3"
+      },
+      "type": {
+        "name": "Connects to::Connected by",
+        "value": "5599a965c0a8010e00da3b58b113d70e"
+      }
+    },
+    {
+      "parent": {
+        "name": "VPN Nat Gateway",
+        "value": "17d67dd4831022101767e270ceaad3f2"
+      },
+      "child": {
+        "name": "Application Load Balancer",
+        "value": "1cc6b5d4831022101767e270ceaad316"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "VPN Gateway",
+        "value": "eae4f9d0831022101767e270ceaad367"
+      },
+      "child": {
+        "name": "IAM Role",
+        "value": "2bb77558831022101767e270ceaad3a0"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Direct Connect",
+        "value": "6235fd54831022101767e270ceaad3e8"
+      },
+      "child": {
+        "name": "IAM Role",
+        "value": "2bb77558831022101767e270ceaad3a0"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application Firewall",
+        "value": "396671d4831022101767e270ceaad363"
+      },
+      "child": {
+        "name": "IAM Role",
+        "value": "2bb77558831022101767e270ceaad3a0"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Route 53",
+        "value": "f68635d4831022101767e270ceaad366"
+      },
+      "child": {
+        "name": "IAM Role",
+        "value": "2bb77558831022101767e270ceaad3a0"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Internet Gateway",
+        "value": "65a675d4831022101767e270ceaad34d"
+      },
+      "child": {
+        "name": "IAM Role",
+        "value": "2bb77558831022101767e270ceaad3a0"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Bastion Host",
+        "value": "4bfa791c831022101767e270ceaad32c"
+      },
+      "child": {
+        "name": "IAM Role",
+        "value": "2bb77558831022101767e270ceaad3a0"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Application Load Balancer",
+        "value": "1cc6b5d4831022101767e270ceaad316"
+      },
+      "child": {
+        "name": "IAM Role",
+        "value": "2bb77558831022101767e270ceaad3a0"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application 01",
+        "value": "126bb55c831022101767e270ceaad3ab"
+      },
+      "child": {
+        "name": "IAM Role",
+        "value": "2bb77558831022101767e270ceaad3a0"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application 02",
+        "value": "01bbb95c831022101767e270ceaad3fa"
+      },
+      "child": {
+        "name": "IAM Role",
+        "value": "2bb77558831022101767e270ceaad3a0"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Middleware Application 01",
+        "value": "bc2cf15c831022101767e270ceaad316"
+      },
+      "child": {
+        "name": "IAM Role",
+        "value": "2bb77558831022101767e270ceaad3a0"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Middleware Application 02",
+        "value": "a05c719c831022101767e270ceaad3a7"
+      },
+      "child": {
+        "name": "IAM Role",
+        "value": "2bb77558831022101767e270ceaad3a0"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Database Server 01",
+        "value": "ae7c7d5c831022101767e270ceaad313"
+      },
+      "child": {
+        "name": "IAM Role",
+        "value": "2bb77558831022101767e270ceaad3a0"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Database Server 02",
+        "value": "61acf19c831022101767e270ceaad3f3"
+      },
+      "child": {
+        "name": "IAM Role",
+        "value": "2bb77558831022101767e270ceaad3a0"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "VPN Nat Gateway",
+        "value": "17d67dd4831022101767e270ceaad3f2"
+      },
+      "child": {
+        "name": "IAM Role",
+        "value": "2bb77558831022101767e270ceaad3a0"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "VPN Gateway",
+        "value": "eae4f9d0831022101767e270ceaad367"
+      },
+      "child": {
+        "name": "Role",
+        "value": "8de73958831022101767e270ceaad38d"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Direct Connect",
+        "value": "6235fd54831022101767e270ceaad3e8"
+      },
+      "child": {
+        "name": "Role",
+        "value": "8de73958831022101767e270ceaad38d"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application Firewall",
+        "value": "396671d4831022101767e270ceaad363"
+      },
+      "child": {
+        "name": "Role",
+        "value": "8de73958831022101767e270ceaad38d"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Route 53",
+        "value": "f68635d4831022101767e270ceaad366"
+      },
+      "child": {
+        "name": "Role",
+        "value": "8de73958831022101767e270ceaad38d"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Internet Gateway",
+        "value": "65a675d4831022101767e270ceaad34d"
+      },
+      "child": {
+        "name": "Role",
+        "value": "8de73958831022101767e270ceaad38d"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Bastion Host",
+        "value": "4bfa791c831022101767e270ceaad32c"
+      },
+      "child": {
+        "name": "Role",
+        "value": "8de73958831022101767e270ceaad38d"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Application Load Balancer",
+        "value": "1cc6b5d4831022101767e270ceaad316"
+      },
+      "child": {
+        "name": "Role",
+        "value": "8de73958831022101767e270ceaad38d"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application 01",
+        "value": "126bb55c831022101767e270ceaad3ab"
+      },
+      "child": {
+        "name": "Role",
+        "value": "8de73958831022101767e270ceaad38d"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application 02",
+        "value": "01bbb95c831022101767e270ceaad3fa"
+      },
+      "child": {
+        "name": "Role",
+        "value": "8de73958831022101767e270ceaad38d"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Middleware Application 01",
+        "value": "bc2cf15c831022101767e270ceaad316"
+      },
+      "child": {
+        "name": "Role",
+        "value": "8de73958831022101767e270ceaad38d"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Middleware Application 02",
+        "value": "a05c719c831022101767e270ceaad3a7"
+      },
+      "child": {
+        "name": "Role",
+        "value": "8de73958831022101767e270ceaad38d"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Database Server 01",
+        "value": "ae7c7d5c831022101767e270ceaad313"
+      },
+      "child": {
+        "name": "Role",
+        "value": "8de73958831022101767e270ceaad38d"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "Database Server 02",
+        "value": "61acf19c831022101767e270ceaad3f3"
+      },
+      "child": {
+        "name": "Role",
+        "value": "8de73958831022101767e270ceaad38d"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "VPN Nat Gateway",
+        "value": "17d67dd4831022101767e270ceaad3f2"
+      },
+      "child": {
+        "name": "Role",
+        "value": "8de73958831022101767e270ceaad38d"
+      },
+      "type": {
+        "name": "Provides::Provided by",
+        "value": "f67e9ecdff602000dada361332f49d35"
+      }
+    },
+    {
+      "parent": {
+        "name": "VPN Gateway",
+        "value": "eae4f9d0831022101767e270ceaad367"
+      },
+      "child": {
+        "name": "Cloudwatch",
+        "value": "391a3dd8831022101767e270ceaad378"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Direct Connect",
+        "value": "6235fd54831022101767e270ceaad3e8"
+      },
+      "child": {
+        "name": "Cloudwatch",
+        "value": "391a3dd8831022101767e270ceaad378"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application Firewall",
+        "value": "396671d4831022101767e270ceaad363"
+      },
+      "child": {
+        "name": "Cloudwatch",
+        "value": "391a3dd8831022101767e270ceaad378"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Route 53",
+        "value": "f68635d4831022101767e270ceaad366"
+      },
+      "child": {
+        "name": "Cloudwatch",
+        "value": "391a3dd8831022101767e270ceaad378"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Internet Gateway",
+        "value": "65a675d4831022101767e270ceaad34d"
+      },
+      "child": {
+        "name": "Cloudwatch",
+        "value": "391a3dd8831022101767e270ceaad378"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Bastion Host",
+        "value": "4bfa791c831022101767e270ceaad32c"
+      },
+      "child": {
+        "name": "Cloudwatch",
+        "value": "391a3dd8831022101767e270ceaad378"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Application Load Balancer",
+        "value": "1cc6b5d4831022101767e270ceaad316"
+      },
+      "child": {
+        "name": "Cloudwatch",
+        "value": "391a3dd8831022101767e270ceaad378"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application 01",
+        "value": "126bb55c831022101767e270ceaad3ab"
+      },
+      "child": {
+        "name": "Cloudwatch",
+        "value": "391a3dd8831022101767e270ceaad378"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application 02",
+        "value": "01bbb95c831022101767e270ceaad3fa"
+      },
+      "child": {
+        "name": "Cloudwatch",
+        "value": "391a3dd8831022101767e270ceaad378"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Middleware Application 01",
+        "value": "bc2cf15c831022101767e270ceaad316"
+      },
+      "child": {
+        "name": "Cloudwatch",
+        "value": "391a3dd8831022101767e270ceaad378"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Middleware Application 02",
+        "value": "a05c719c831022101767e270ceaad3a7"
+      },
+      "child": {
+        "name": "Cloudwatch",
+        "value": "391a3dd8831022101767e270ceaad378"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Database Server 01",
+        "value": "ae7c7d5c831022101767e270ceaad313"
+      },
+      "child": {
+        "name": "Cloudwatch",
+        "value": "391a3dd8831022101767e270ceaad378"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Database Server 02",
+        "value": "61acf19c831022101767e270ceaad3f3"
+      },
+      "child": {
+        "name": "Cloudwatch",
+        "value": "391a3dd8831022101767e270ceaad378"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "VPN Nat Gateway",
+        "value": "17d67dd4831022101767e270ceaad3f2"
+      },
+      "child": {
+        "name": "Cloudwatch",
+        "value": "391a3dd8831022101767e270ceaad378"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "VPN Gateway",
+        "value": "eae4f9d0831022101767e270ceaad367"
+      },
+      "child": {
+        "name": "Cloud HSM",
+        "value": "e86a3198831022101767e270ceaad3b9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Direct Connect",
+        "value": "6235fd54831022101767e270ceaad3e8"
+      },
+      "child": {
+        "name": "Cloud HSM",
+        "value": "e86a3198831022101767e270ceaad3b9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application Firewall",
+        "value": "396671d4831022101767e270ceaad363"
+      },
+      "child": {
+        "name": "Cloud HSM",
+        "value": "e86a3198831022101767e270ceaad3b9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Route 53",
+        "value": "f68635d4831022101767e270ceaad366"
+      },
+      "child": {
+        "name": "Cloud HSM",
+        "value": "e86a3198831022101767e270ceaad3b9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Internet Gateway",
+        "value": "65a675d4831022101767e270ceaad34d"
+      },
+      "child": {
+        "name": "Cloud HSM",
+        "value": "e86a3198831022101767e270ceaad3b9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Bastion Host",
+        "value": "4bfa791c831022101767e270ceaad32c"
+      },
+      "child": {
+        "name": "Cloud HSM",
+        "value": "e86a3198831022101767e270ceaad3b9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Application Load Balancer",
+        "value": "1cc6b5d4831022101767e270ceaad316"
+      },
+      "child": {
+        "name": "Cloud HSM",
+        "value": "e86a3198831022101767e270ceaad3b9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application 01",
+        "value": "126bb55c831022101767e270ceaad3ab"
+      },
+      "child": {
+        "name": "Cloud HSM",
+        "value": "e86a3198831022101767e270ceaad3b9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application 02",
+        "value": "01bbb95c831022101767e270ceaad3fa"
+      },
+      "child": {
+        "name": "Cloud HSM",
+        "value": "e86a3198831022101767e270ceaad3b9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Middleware Application 01",
+        "value": "bc2cf15c831022101767e270ceaad316"
+      },
+      "child": {
+        "name": "Cloud HSM",
+        "value": "e86a3198831022101767e270ceaad3b9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Middleware Application 02",
+        "value": "a05c719c831022101767e270ceaad3a7"
+      },
+      "child": {
+        "name": "Cloud HSM",
+        "value": "e86a3198831022101767e270ceaad3b9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Database Server 01",
+        "value": "ae7c7d5c831022101767e270ceaad313"
+      },
+      "child": {
+        "name": "Cloud HSM",
+        "value": "e86a3198831022101767e270ceaad3b9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Database Server 02",
+        "value": "61acf19c831022101767e270ceaad3f3"
+      },
+      "child": {
+        "name": "Cloud HSM",
+        "value": "e86a3198831022101767e270ceaad3b9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "VPN Nat Gateway",
+        "value": "17d67dd4831022101767e270ceaad3f2"
+      },
+      "child": {
+        "name": "Cloud HSM",
+        "value": "e86a3198831022101767e270ceaad3b9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Active Directory services",
+        "value": "25a979d8831022101767e270ceaad3c1"
+      },
+      "child": {
+        "name": "VPN Gateway",
+        "value": "eae4f9d0831022101767e270ceaad367"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Active Directory services",
+        "value": "25a979d8831022101767e270ceaad3c1"
+      },
+      "child": {
+        "name": "Web Application Firewall",
+        "value": "396671d4831022101767e270ceaad363"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Active Directory services",
+        "value": "25a979d8831022101767e270ceaad3c1"
+      },
+      "child": {
+        "name": "Internet Gateway",
+        "value": "65a675d4831022101767e270ceaad34d"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Active Directory services",
+        "value": "25a979d8831022101767e270ceaad3c1"
+      },
+      "child": {
+        "name": "Bastion Host",
+        "value": "4bfa791c831022101767e270ceaad32c"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Active Directory services",
+        "value": "25a979d8831022101767e270ceaad3c1"
+      },
+      "child": {
+        "name": "Application Load Balancer",
+        "value": "1cc6b5d4831022101767e270ceaad316"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Active Directory services",
+        "value": "25a979d8831022101767e270ceaad3c1"
+      },
+      "child": {
+        "name": "Web Application 01",
+        "value": "126bb55c831022101767e270ceaad3ab"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Active Directory services",
+        "value": "25a979d8831022101767e270ceaad3c1"
+      },
+      "child": {
+        "name": "Web Application 02",
+        "value": "01bbb95c831022101767e270ceaad3fa"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Active Directory services",
+        "value": "25a979d8831022101767e270ceaad3c1"
+      },
+      "child": {
+        "name": "Middleware Application 01",
+        "value": "bc2cf15c831022101767e270ceaad316"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Active Directory services",
+        "value": "25a979d8831022101767e270ceaad3c1"
+      },
+      "child": {
+        "name": "Middleware Application 02",
+        "value": "a05c719c831022101767e270ceaad3a7"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Active Directory services",
+        "value": "25a979d8831022101767e270ceaad3c1"
+      },
+      "child": {
+        "name": "VPN Nat Gateway",
+        "value": "17d67dd4831022101767e270ceaad3f2"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "VPN Gateway",
+        "value": "eae4f9d0831022101767e270ceaad367"
+      },
+      "child": {
+        "name": "Endpoints",
+        "value": "cff67d54831022101767e270ceaad353"
+      },
+      "type": {
+        "name": "Connects to::Connected by",
+        "value": "5599a965c0a8010e00da3b58b113d70e"
+      }
+    },
+    {
+      "parent": {
+        "name": "VPN Nat Gateway",
+        "value": "17d67dd4831022101767e270ceaad3f2"
+      },
+      "child": {
+        "name": "Endpoints",
+        "value": "cff67d54831022101767e270ceaad353"
+      },
+      "type": {
+        "name": "Connects to::Connected by",
+        "value": "5599a965c0a8010e00da3b58b113d70e"
+      }
+    },
+    {
+      "parent": {
+        "name": "VPN Gateway",
+        "value": "eae4f9d0831022101767e270ceaad367"
+      },
+      "child": {
+        "name": "S3 Bucket",
+        "value": "7daa391c831022101767e270ceaad3e9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Direct Connect",
+        "value": "6235fd54831022101767e270ceaad3e8"
+      },
+      "child": {
+        "name": "S3 Bucket",
+        "value": "7daa391c831022101767e270ceaad3e9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application Firewall",
+        "value": "396671d4831022101767e270ceaad363"
+      },
+      "child": {
+        "name": "S3 Bucket",
+        "value": "7daa391c831022101767e270ceaad3e9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Route 53",
+        "value": "f68635d4831022101767e270ceaad366"
+      },
+      "child": {
+        "name": "S3 Bucket",
+        "value": "7daa391c831022101767e270ceaad3e9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Internet Gateway",
+        "value": "65a675d4831022101767e270ceaad34d"
+      },
+      "child": {
+        "name": "S3 Bucket",
+        "value": "7daa391c831022101767e270ceaad3e9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Bastion Host",
+        "value": "4bfa791c831022101767e270ceaad32c"
+      },
+      "child": {
+        "name": "S3 Bucket",
+        "value": "7daa391c831022101767e270ceaad3e9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Application Load Balancer",
+        "value": "1cc6b5d4831022101767e270ceaad316"
+      },
+      "child": {
+        "name": "S3 Bucket",
+        "value": "7daa391c831022101767e270ceaad3e9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application 01",
+        "value": "126bb55c831022101767e270ceaad3ab"
+      },
+      "child": {
+        "name": "S3 Bucket",
+        "value": "7daa391c831022101767e270ceaad3e9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application 02",
+        "value": "01bbb95c831022101767e270ceaad3fa"
+      },
+      "child": {
+        "name": "S3 Bucket",
+        "value": "7daa391c831022101767e270ceaad3e9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Middleware Application 01",
+        "value": "bc2cf15c831022101767e270ceaad316"
+      },
+      "child": {
+        "name": "S3 Bucket",
+        "value": "7daa391c831022101767e270ceaad3e9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Middleware Application 02",
+        "value": "a05c719c831022101767e270ceaad3a7"
+      },
+      "child": {
+        "name": "S3 Bucket",
+        "value": "7daa391c831022101767e270ceaad3e9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Database Server 01",
+        "value": "ae7c7d5c831022101767e270ceaad313"
+      },
+      "child": {
+        "name": "S3 Bucket",
+        "value": "7daa391c831022101767e270ceaad3e9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Database Server 02",
+        "value": "61acf19c831022101767e270ceaad3f3"
+      },
+      "child": {
+        "name": "S3 Bucket",
+        "value": "7daa391c831022101767e270ceaad3e9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "VPN Nat Gateway",
+        "value": "17d67dd4831022101767e270ceaad3f2"
+      },
+      "child": {
+        "name": "S3 Bucket",
+        "value": "7daa391c831022101767e270ceaad3e9"
+      },
+      "type": {
+        "name": "Depends on::Used by",
+        "value": "1a9cb166f1571100a92eb60da2bce5c5"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application 02",
+        "value": "01bbb95c831022101767e270ceaad3fa"
+      },
+      "child": {
+        "name": "IDEAWORKS application",
+        "value": "d1287d58831022101767e270ceaad38f"
+      },
+      "type": {
+        "name": "Runs on::Runs",
+        "value": "60bc4e22c0a8010e01f074cbe6bd73c3"
+      }
+    },
+    {
+      "parent": {
+        "name": "Middleware Application 01",
+        "value": "bc2cf15c831022101767e270ceaad316"
+      },
+      "child": {
+        "name": "IDEAWORKS application",
+        "value": "d1287d58831022101767e270ceaad38f"
+      },
+      "type": {
+        "name": "Runs on::Runs",
+        "value": "60bc4e22c0a8010e01f074cbe6bd73c3"
+      }
+    },
+    {
+      "parent": {
+        "name": "Middleware Application 02",
+        "value": "a05c719c831022101767e270ceaad3a7"
+      },
+      "child": {
+        "name": "IDEAWORKS application",
+        "value": "d1287d58831022101767e270ceaad38f"
+      },
+      "type": {
+        "name": "Runs on::Runs",
+        "value": "60bc4e22c0a8010e01f074cbe6bd73c3"
+      }
+    },
+    {
+      "parent": {
+        "name": "Database Server 01",
+        "value": "ae7c7d5c831022101767e270ceaad313"
+      },
+      "child": {
+        "name": "IDEAWORKS application",
+        "value": "d1287d58831022101767e270ceaad38f"
+      },
+      "type": {
+        "name": "Runs on::Runs",
+        "value": "60bc4e22c0a8010e01f074cbe6bd73c3"
+      }
+    },
+    {
+      "parent": {
+        "name": "Database Server 02",
+        "value": "61acf19c831022101767e270ceaad3f3"
+      },
+      "child": {
+        "name": "IDEAWORKS application",
+        "value": "d1287d58831022101767e270ceaad38f"
+      },
+      "type": {
+        "name": "Runs on::Runs",
+        "value": "60bc4e22c0a8010e01f074cbe6bd73c3"
+      }
+    },
+    {
+      "parent": {
+        "name": "VPN Nat Gateway",
+        "value": "17d67dd4831022101767e270ceaad3f2"
+      },
+      "child": {
+        "name": "IDEAWORKS application",
+        "value": "d1287d58831022101767e270ceaad38f"
+      },
+      "type": {
+        "name": "Runs on::Runs",
+        "value": "60bc4e22c0a8010e01f074cbe6bd73c3"
+      }
+    },
+    {
+      "parent": {
+        "name": "Database Server 01",
+        "value": "ae7c7d5c831022101767e270ceaad313"
+      },
+      "child": {
+        "name": "Database Server 02",
+        "value": "61acf19c831022101767e270ceaad3f3"
+      },
+      "type": {
+        "name": "Cluster of::Cluster",
+        "value": "a99d39118f10310091769012cbbe4429"
+      }
+    },
+    {
+      "parent": {
+        "name": "Middleware Application 01",
+        "value": "bc2cf15c831022101767e270ceaad316"
+      },
+      "child": {
+        "name": "Middleware Application 02",
+        "value": "a05c719c831022101767e270ceaad3a7"
+      },
+      "type": {
+        "name": "Cluster of::Cluster",
+        "value": "a99d39118f10310091769012cbbe4429"
+      }
+    },
+    {
+      "parent": {
+        "name": "Web Application 01",
+        "value": "126bb55c831022101767e270ceaad3ab"
+      },
+      "child": {
+        "name": "Web Application 02",
+        "value": "01bbb95c831022101767e270ceaad3fa"
+      },
+      "type": {
+        "name": "Cluster of::Cluster",
+        "value": "a99d39118f10310091769012cbbe4429"
+      }
+    }
+  ]

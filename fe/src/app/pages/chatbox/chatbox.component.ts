@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { PreserveLineBreaksPipe } from '../../pipes/preserve-line-breaks.pipe';
+import { TicketService } from 'src/app/services/ticket.service';
 
 interface ChatMessage {
   text: string;
@@ -33,7 +34,8 @@ export class ChatboxComponent implements OnDestroy {
 
   constructor(
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private ticketService: TicketService
   ) {
     this.initializeSpeechRecognition();
   }
@@ -72,7 +74,7 @@ export class ChatboxComponent implements OnDestroy {
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
-      this.processImage(file);
+      this.processFile(file);
     }
   }
 
@@ -86,17 +88,71 @@ export class ChatboxComponent implements OnDestroy {
     event.stopPropagation();
     const files = event.dataTransfer?.files;
     if (files?.length) {
-      this.processImage(files[0]);
+      this.processFile(files[0]);
     }
   }
 
-  processImage(file: File) {
-    // Add your image processing logic here
-    this.showUpload = false;
-    this.snackBar.open('Image uploaded successfully!', 'Close', {
-      duration: 3000
-    });
+// Update processFile method
+processFile(file: File) {
+  if (!file) {
+    this.snackBar.open('No file selected!', 'Close', { duration: 3000 });
+    return;
   }
+
+  // Check if file is CSV
+  if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
+    this.snackBar.open('Please upload a CSV file', 'Close', { duration: 3000 });
+    return;
+  }
+
+  const maxSize = 10 * 1024 * 1024; // 10MB
+  if (file.size > maxSize) {
+    this.snackBar.open('File size should be less than 10MB', 'Close', { duration: 3000 });
+    return;
+  }
+
+  this.isLoading = true;
+  this.ticketService.uploadCsvFile(file)
+    .subscribe({
+      next: (response: any) => {
+        this.showUpload = false;
+        
+        // Process the uploaded CSV data
+        this.ticketService.processCsvData(response.data)
+          .subscribe({
+            next: (processedData: any) => {
+              this.isLoading = false;
+              this.snackBar.open('CSV file processed successfully!', 'Close', {
+                duration: 3000
+              });
+
+              // Add processing result to chat
+              this.messages.push({
+                text: `File "${file.name}" processed successfully`,
+                sender: 'bot',
+                time: new Date()
+              });
+              this.scrollToBottom();
+            },
+            error: (error) => {
+              this.handleError('Error processing CSV data');
+            }
+          });
+      },
+      error: (error) => {
+        this.handleError('Error uploading file');
+      }
+    });
+}
+
+// Add error handler method
+private handleError(message: string): void {
+  this.isLoading = false;
+  console.error('Error:', message);
+  this.snackBar.open(`${message}. Please try again.`, 'Close', {
+    duration: 3000
+  });
+}
 
   async sendMessage() {
     if (!this.currentMessage.trim()) return;

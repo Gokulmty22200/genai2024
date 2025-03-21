@@ -10,9 +10,9 @@
       <!-- Image Upload Section -->
       <div *ngIf="showUpload" class="upload-section">
         <div class="upload-box" (dragover)="onDragOver($event)" (drop)="onDrop($event)" (click)="fileInput.click()">
-          <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" hidden>
+          <input #fileInput type="file" (change)="onFileSelected($event)" accept="csv/*" hidden>
           <mat-icon>cloud_upload</mat-icon>
-          <p>Drag and drop an image or click to select</p>
+          <p>Drag and drop an File or click to select</p>
         </div>
       </div>
   

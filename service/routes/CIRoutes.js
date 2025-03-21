@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const CIController = require('../controllers/CIController');
+const ApiCIController = require('../controllers/ApiCIController');
 const path = require('path');
 const fs = require('fs');
 
@@ -21,5 +22,7 @@ router.post('/processIpData', checkCSVExists, CIController.processIpData);
 router.post('/processImpactedCI', CIController.impactedCI);
 router.post('/analyzeImpact', CIController.analyzeImpact);
 
+router.post('/processChangeData', ApiCIController.processChangeData);
+router.get('/change-impact/:changeId', ApiCIController.getChangeImpactData);
 
 module.exports = router;

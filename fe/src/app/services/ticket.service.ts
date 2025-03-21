@@ -52,4 +52,21 @@ export class TicketService {
 
   return this.http.post(`${this.apiUrl}/ci/analyzeImpact`, imapactData, { headers });
   }
+
+  uploadCsvFile(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'multipart/form-data');
+
+    return this.http.post(`${this.apiUrl}/ci/uploadCsv`, formData, { headers });
+  }
+
+  processCsvData(fileData: any): Observable<any> {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json');
+
+    return this.http.post(`${this.apiUrl}/ci/processCsvData`, fileData, { headers });
+  }
 }
