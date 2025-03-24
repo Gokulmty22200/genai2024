@@ -50,6 +50,11 @@ export class ChangeTicketComponent {
   }
 
   getChangeTicketData(): void {
+    const dates = {
+      'CHG0030005': '04-02-2024',
+      'CHG0030006': '04-03-2024',
+      'CHG0030008': '04-04-2024'
+    };
     this.serviceNow.getChangeTicketData()
       .pipe(
         switchMap((ticketData: any) => {
@@ -75,13 +80,15 @@ export class ChangeTicketComponent {
               const ciMap = new Map(
                 ciResults.map((result: any) => [result.ticketNumber, result.ciNames])
               );
+              console.log(tickets);
 
               // Update each ticket with its corresponding CIs
-              return tickets.map((ticket: any) => ({
+              return tickets.map((ticket: { number: { value: keyof typeof dates }, cmdb_ci: any }) => ({
                 ...ticket,
                 cmdb_ci: {
                   ...ticket.cmdb_ci,
-                  display_value: ciMap.get(ticket.number.value) || ''
+                  display_value: ciMap.get(ticket.number.value) || '',
+                  date: dates[ticket.number.value] || ''
                 }
               }));
             })
