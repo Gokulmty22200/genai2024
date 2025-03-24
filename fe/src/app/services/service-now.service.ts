@@ -30,7 +30,7 @@ export class ServiceNowService {
 
   getRelationshipData(): Observable<any> {
     // this.serviceNowUrl = '/api/now/table/cmdb_rel_ci'
-    this.queryParams = 'sysparm_query=sys_created_onON2025-03-12%40javascript%3Ags.dateGenerate(%272025-03-12%27%2C%27start%27)%40javascript%3Ags.dateGenerate(%272025-03-12%27%2C%27end%27)&sysparm_fields=parent%2Cconnection_strength%2Csys_mod_count%2Csys_updated_on%2Ctype%2Csys_tags%2Csys_id%2Csys_updated_by%2Cport%2Csys_created_on%2Cpercent_outage%2Csys_created_by%2Cchild&sysparm_limit=200&sysparm_display_value=all';
+    this.queryParams = 'sysparm_query=sys_created_by%3Dadmin&sysparm_fields=parent%2Cconnection_strength%2Csys_mod_count%2Csys_updated_on%2Ctype%2Csys_tags%2Csys_id%2Csys_updated_by%2Cport%2Csys_created_on%2Cpercent_outage%2Csys_created_by%2Cchild&sysparm_display_value=all';
     const headers = new HttpHeaders()
     .set('Authorization', 'Basic ' + btoa('Virtusaicon:Virtusa25@'))
     .set('Accept', 'application/json')
@@ -60,7 +60,7 @@ export class ServiceNowService {
 
   getIpData(): Observable<any> {
     // this.serviceNowUrl = '/api/now/table/cmdb_ci'
-    this.queryParams = 'sysparm_query=nameINVPN%20Gateway%2CDirect%20Connect%2CWeb%20Application%20Firewall%2CRoute%2053%2CInternet%20Gateway%2CBastion%20Host%2CApplication%20Load%20Balancer%2CWeb%20Application%2001%2CWeb%20Application%2002%2CMiddleware%20Application%2001%2CMiddleware%20Application%2002%2CDatabase%20Server%2001%2CDatabase%20Server%2002%2CVPN%20Nat%20Gateway%2CIAM%20Role%2CRole%2CCloudwatch%2CCloud%20HSM%2CActive%20Directory%20services%2CEndpoints%2CS3%20Bucket%2CIDEAWORKS%20application%2C&sysparm_fields=attested_date%2Cskip_sync%2Coperational_status%2Cproduct_instance_id%2Csys_updated_on%2Cattestation_score%2Cdiscovery_source%2Cfirst_discovered%2Csys_updated_by%2Cdue_in%2Csys_created_on%2Csys_domain%2Cinstall_date%2Cinvoice_number%2Cgl_account%2Csys_created_by%2Cwarranty_expiration%2Casset_tag%2Cfqdn%2Cchange_control%2Cowned_by%2Cchecked_out%2Csys_domain_path%2Cbusiness_unit%2Cdelivery_date%2Cmaintenance_schedule%2Cinstall_status%2Ccost_center%2Cattested_by%2Csupported_by%2Cdns_domain%2Cname%2Cassigned%2Cpurchase_date%2Clife_cycle_stage%2Csubcategory%2Cshort_description%2Cassignment_group%2Cmanaged_by%2Cmanaged_by_group%2Clast_discovered%2Ccan_print%2Csys_class_name%2Cmanufacturer%2Csys_id%2Cpo_number%2Cchecked_in%2Csys_class_path%2Cvendor%2Clife_cycle_stage_status%2Cmac_address%2Ccompany%2Cmodel_number%2Cjustification%2Cdepartment%2Cassigned_to%2Cstart_date%2Ccost%2Ccomments%2Cattestation_status%2Csys_mod_count%2Cserial_number%2Cmonitor%2Cmodel_id%2Cip_address%2Cduplicate_of%2Csys_tags%2Ccost_cc%2Csupport_group%2Corder_date%2Cschedule%2Cenvironment%2Cdue%2Cattested%2Cunverified%2Ccorrelation_id%2Cattributes%2Clocation%2Casset%2Ccategory%2Cfault_count%2Clease_id&sysparm_limit=100';
+    this.queryParams = `sysparm_query=sys_created_by%3Dadmin%5Esys_created_onBETWEENjavascript%3Ags.dateGenerate('2025-02-05'%2C'00%3A00%3A00')%40javascript%3Ags.dateGenerate('2025-03-21'%2C'23%3A59%3A59')&sysparm_fields=attested_date%2Cskip_sync%2Coperational_status%2Cproduct_instance_id%2Csys_updated_on%2Cattestation_score%2Cdiscovery_source%2Cfirst_discovered%2Csys_updated_by%2Cdue_in%2Csys_created_on%2Csys_domain%2Cinstall_date%2Cinvoice_number%2Cgl_account%2Csys_created_by%2Cwarranty_expiration%2Casset_tag%2Cfqdn%2Cchange_control%2Cowned_by%2Cchecked_out%2Csys_domain_path%2Cbusiness_unit%2Cdelivery_date%2Cmaintenance_schedule%2Cinstall_status%2Ccost_center%2Cattested_by%2Csupported_by%2Cdns_domain%2Cname%2Cassigned%2Cpurchase_date%2Clife_cycle_stage%2Csubcategory%2Cshort_description%2Cassignment_group%2Cmanaged_by%2Cmanaged_by_group%2Clast_discovered%2Ccan_print%2Csys_class_name%2Cmanufacturer%2Csys_id%2Cpo_number%2Cchecked_in%2Csys_class_path%2Cvendor%2Clife_cycle_stage_status%2Cmac_address%2Ccompany%2Cmodel_number%2Cjustification%2Cdepartment%2Cassigned_to%2Cstart_date%2Ccost%2Ccomments%2Cattestation_status%2Csys_mod_count%2Cserial_number%2Cmonitor%2Cmodel_id%2Cip_address%2Cduplicate_of%2Csys_tags%2Ccost_cc%2Csupport_group%2Corder_date%2Cschedule%2Cenvironment%2Cdue%2Cattested%2Cunverified%2Ccorrelation_id%2Cattributes%2Clocation%2Casset%2Ccategory%2Cfault_count%2Clease_id`;
     const headers = new HttpHeaders()
     .set('Authorization', 'Basic ' + btoa('Virtusaicon:Virtusa25@'))
     .set('Accept', 'application/json')
@@ -70,8 +70,8 @@ export class ServiceNowService {
   return this.http.get<any>(url, { headers });
   }
 
-  getImpactedCIs(): Observable<any> {
-    this.queryParams = 'sysparm_query=task%3Db1f6054583d022101767e270ceaad319&sysparm_fields=applied%2Csys_mod_count%2Csys_updated_on%2Csys_tags%2Cci_item%2Capplied_date%2Csys_id%2Ctask%2Csys_updated_by%2Cxml%2Csys_created_on%2Csys_created_by%2Cmanual_proposed_change%2Cadded_from_dynamic_ci&sysparm_display_value=all';
+  getImpactedCIs(ticketId: string): Observable<any> {
+    this.queryParams = `sysparm_fields=ci_item%2Ctask&task=${ticketId}&sysparm_display_value=all`;
     const headers = new HttpHeaders()
     .set('Authorization', 'Basic ' + btoa('Virtusaicon:Virtusa25@'))
     .set('Accept', 'application/json')

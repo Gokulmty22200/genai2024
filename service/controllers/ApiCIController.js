@@ -567,3 +567,86 @@ exports.getChangeImpactData = async (req, res) => {
         });
     }
 };
+
+async function updateChangeAnalysis(inputData) {
+    try {
+        const outputPath = path.join(__dirname, '../data/change_analysis.json');
+        let analysisData;
+
+        // Read existing change analysis data
+        try {
+            analysisData = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
+        } catch (error) {
+            // Initialize new structure if file doesn't exist
+            analysisData = {
+                timestamp: new Date().toISOString(),
+                totalRecords: 0,
+                analysis: [],
+                relationships: {}
+            };
+        }
+
+        // Format the input data
+        const formattedAnalysis = {
+            changeRecord: {
+                changeId: inputData.change_id,
+                impactedCIs: inputData.impact.affectedCIs,
+                // Add other required fields with default values
+                description: "Change impact analysis",
+                category: "Impact Analysis",
+                implementationDate: new Date().toISOString()
+            },
+            relationshipAnalysis: inputData.relationship,
+            impactAnalysis: inputData.impact,
+            trafficAnalysis: inputData.ipData
+        };
+
+        // Check if change ID already exists
+        const existingRecordIndex = analysisData.analysis.findIndex(
+            record => record.changeRecord.changeId === inputData.change_id
+        );
+
+        if (existingRecordIndex !== -1) {
+            // Update existing record
+            analysisData.analysis[existingRecordIndex] = formattedAnalysis;
+        } else {
+            // Add new record
+            analysisData.analysis.push(formattedAnalysis);
+        }
+
+        // Update metadata
+        analysisData.timestamp = new Date().toISOString();
+        analysisData.totalRecords = analysisData.analysis.length;
+
+        // Save updated data
+        fs.writeFileSync(outputPath, JSON.stringify(analysisData, null, 2));
+
+        return {
+            success: true,
+            message: `Change analysis ${existingRecordIndex !== -1 ? 'updated' : 'added'} successfully`,
+            data: {
+                changeId: inputData.change_id,
+                isUpdate: existingRecordIndex !== -1
+            }
+        };
+
+    } catch (error) {
+        console.error('Error updating change analysis:', error);
+        throw error;
+    }
+}
+
+// Add new controller endpoint
+exports.updateChangeData = async (req, res) => {
+    try {
+        const result = await updateChangeAnalysis(req.body);
+        res.status(200).json(result);
+    } catch (error) {
+        console.error('Error in updateChangeData:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error updating change data',
+            error: error.message
+        });
+    }
+};

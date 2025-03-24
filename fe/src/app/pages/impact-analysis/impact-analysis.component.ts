@@ -119,7 +119,7 @@ export class ImpactAnalysisComponent implements OnInit {
   }
 
   getImpactedCIs(){
-    this.serviceNow.getImpactedCIs()
+    this.serviceNow.getImpactedCIs(this.changeData.changeId)
       .subscribe({
         next: (data: { result: any }) => {
           if (!this.changeData) {

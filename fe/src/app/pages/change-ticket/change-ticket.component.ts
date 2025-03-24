@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { MaterialModule } from '../../material.module';
 import { TicketService } from '../../services/ticket.service';
 import { ServiceNowService } from 'src/app/services/service-now.service';
-import { map, switchMap } from 'rxjs';
+import { forkJoin, map, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-change-ticket',
@@ -53,23 +53,35 @@ export class ChangeTicketComponent {
     this.serviceNow.getChangeTicketData()
       .pipe(
         switchMap((ticketData: any) => {
-          // First store the ticket data
+          // Store the ticket data
           const tickets = ticketData.result;
           
-          // Then get impacted CIs
-          return this.serviceNow.getImpactedCIs().pipe(
-            map(impactedCIsResponse => {
-              // Format CI names
-              const ciNames = impactedCIsResponse.result
-                .map((ci: any) => ci.ci_item.display_value)
-                .join(', ');
-  
-              // Update ticket data with CI names
+          // Create an array of observables for each ticket's impacted CIs
+          const ciRequests = tickets.map((ticket: any) => 
+            this.serviceNow.getImpactedCIs(ticket.number.value).pipe(
+              map(impactedCIsResponse => ({
+                ticketNumber: ticket.number.value,
+                ciNames: impactedCIsResponse.result
+                  .map((ci: any) => ci.ci_item.display_value)
+                  .join(', ')
+              }))
+            )
+          );
+
+          // Combine all CI requests
+          return forkJoin(ciRequests).pipe(
+            map((ciResults: any) => {
+              // Create a map of ticket numbers to their CI names
+              const ciMap = new Map(
+                ciResults.map((result: any) => [result.ticketNumber, result.ciNames])
+              );
+
+              // Update each ticket with its corresponding CIs
               return tickets.map((ticket: any) => ({
                 ...ticket,
                 cmdb_ci: {
                   ...ticket.cmdb_ci,
-                  display_value: ciNames
+                  display_value: ciMap.get(ticket.number.value) || ''
                 }
               }));
             })
