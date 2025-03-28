@@ -1,15 +1,15 @@
 import { Component, ViewChild } from '@angular/core';
-import { ChangeTicket } from 'src/app/interface/change-ticket.interface';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
+import { forkJoin, map, switchMap } from 'rxjs';
 
+import { ChangeTicket } from 'src/app/interface/change-ticket.interface';
 import { MaterialModule } from '../../material.module';
 import { TicketService } from '../../services/ticket.service';
 import { ServiceNowService } from 'src/app/services/service-now.service';
-import { forkJoin, map, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-change-ticket',

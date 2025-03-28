@@ -24,5 +24,6 @@ router.post('/analyzeImpact', CIController.analyzeImpact);
 
 router.post('/processChangeData', ApiCIController.processChangeData);
 router.get('/change-impact/:changeId', ApiCIController.getChangeImpactData);
-
+router.post('/updateChangeData', ApiCIController.updateChangeData);
+router.get('/current-change-impact/:changeId', ApiCIController.getCurrentChangeImpactData);
 module.exports = router;

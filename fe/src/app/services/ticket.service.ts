@@ -69,4 +69,8 @@ export class TicketService {
 
     return this.http.post(`${this.apiUrl}/ci/processCsvData`, fileData, { headers });
   }
+
+  updateChangeImpactData(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/ci/updateChangeData`, data);
+  }
 }

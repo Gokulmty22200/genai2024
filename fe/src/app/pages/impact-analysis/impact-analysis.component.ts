@@ -8,6 +8,7 @@ import { ServiceNowService } from 'src/app/services/service-now.service';
 import { ActivatedRoute } from '@angular/router';
 import { ParentChildComponent } from "../parent-child/parent-child.component";
 import { AffectedCiComponent } from "../affected-ci/affected-ci.component";
+import { forkJoin, map } from 'rxjs';
 
 interface Node {
   id: string;
@@ -90,6 +91,7 @@ export class ImpactAnalysisComponent implements OnInit {
   uniquePorts: { port: string; eventId: string; protocol: string }[] = [];
   affectedCi: any = null;
   protocolGroups: PortProtocolGroup[] = [];
+  ipData: any = null;
 
   constructor(private ticketService: TicketService, private serviceNow : ServiceNowService, private route: ActivatedRoute ) {
   }
@@ -110,6 +112,7 @@ export class ImpactAnalysisComponent implements OnInit {
       .subscribe({
         next: (data: any) => {
           console.log(data.result);
+          this.ipData = data.result;
           this.getImpactAnalysis(this.getAffectedCI(data.result), this.relationshipData);
         },
         error: (error: any) => {
@@ -175,6 +178,7 @@ export class ImpactAnalysisComponent implements OnInit {
           this.affectedCi = this.impactData.affectedCIs;
           this.setupPortData();
           this.isLoading = false;
+          this.updateChangeImpactData();
         },
         error: (error) => {
           console.error('Error processing IP data:', error);
@@ -329,4 +333,57 @@ export class ImpactAnalysisComponent implements OnInit {
     if (index === 0) return true;
     return row.protocol !== this.uniquePorts[index - 1]?.protocol;
   }
+
+  updateChangeImpactData(): void {
+    console.log('Here');
+    // Use existing data instead of making new API calls
+    const formattedData = {
+      change_id: this.changeData.changeId,
+      impact: {
+        affectedCIs: this.impactData.affectedCIs.map((ci: any) => ci.name),
+        directImpact: this.impactData.directImpact || [],
+        partialImpact: this.impactData.partialImpact || [],
+        impactedIPs: this.impactData.impactedIPs || [],
+        metadata: {
+          totalComponents: this.impactData.metadata?.totalComponents || 0,
+          directlyImpactedCount: this.impactData.metadata?.directlyImpactedCount || 0,
+          partiallyImpactedCount: this.impactData.metadata?.partiallyImpactedCount || 0,
+          impactedIPsCount: this.impactData.metadata?.impactedIPsCount || 0,
+          affectedCICount: this.impactData.metadata?.affectedCICount || 0
+        },
+        severity: this.impactData.severity || 'MEDIUM',
+        details: {
+          affectedCIDetails: this.impactData.details?.affectedCIDetails || [],
+          firewallDetails: this.impactData.details?.firewallDetails || {
+            name: 'Web Application Firewall',
+            ip: '10.70.1.1'
+          }
+        }
+      },
+      ipData: {
+        teams: this.trafficData || [],
+        metadata: {
+          totalTeams: this.impactData.metadata?.totalTeams || 0,
+          impactSummary: {
+            affected: this.impactData.metadata?.impactSummary?.affected || 0,
+            direct: this.impactData.metadata?.impactSummary?.direct || 0,
+            partial: this.impactData.metadata?.impactSummary?.partial || 0
+          },
+          severity: this.impactData.severity || 'MEDIUM'
+        },
+        affectedCI: this.getAffectedCI(this.ipData) || {}
+      }
+    };
+  
+    // Send formatted data to updateChangeData endpoint
+    this.ticketService.updateChangeImpactData(formattedData).subscribe({
+      next: (response) => {
+        console.log('Change impact data updated successfully:', response);
+      },
+      error: (error) => {
+        console.error('Error updating change impact data:', error);
+      }
+    });
+  }
+
 }

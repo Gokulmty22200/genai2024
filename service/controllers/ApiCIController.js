@@ -570,7 +570,7 @@ exports.getChangeImpactData = async (req, res) => {
 
 async function updateChangeAnalysis(inputData) {
     try {
-        const outputPath = path.join(__dirname, '../data/change_analysis.json');
+        const outputPath = path.join(__dirname, '../data/curr_impact_analysis.json');
         let analysisData;
 
         // Read existing change analysis data
@@ -646,6 +646,87 @@ exports.updateChangeData = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error updating change data',
+            error: error.message
+        });
+    }
+};
+
+exports.getCurrentChangeImpactData = async (req, res) => {
+    try {
+        const { changeId } = req.params;
+        
+        // Read current change analysis data
+        const analysisPath = path.join(__dirname, '../data/curr_impact_analysis.json');
+        const analysisData = JSON.parse(fs.readFileSync(analysisPath, 'utf8'));
+
+        // Find matching change record
+        const changeRecord = analysisData.analysis.find(record => 
+            record.changeRecord.changeId === changeId
+        );
+
+        if (!changeRecord) {
+            return res.status(404).json({
+                success: false,
+                message: `No analysis found for change ID: ${changeId}`
+            });
+        }
+
+        // Group data by teams
+        const teams = new Map();
+        
+        // Get all impacted CIs and their IPs
+        const impactedCIs = new Set([
+            ...changeRecord.impactAnalysis.affectedCIs,
+            ...changeRecord.impactAnalysis.directImpact,
+            ...changeRecord.impactAnalysis.partialImpact
+        ]);
+
+        // Process team data
+        if (changeRecord.trafficAnalysis && changeRecord.trafficAnalysis.teams) {
+            changeRecord.trafficAnalysis.teams.forEach(teamData => {
+                const team = teamData.team;
+                const impactedTeamCIs = teamData.records
+                    .filter(record => impactedCIs.has(record.ciName))
+                    .map(record => ({
+                        ciName: record.ciName,
+                        ports: record.ports.map(port => ({
+                            event: port.event || 'Access',
+                            protocol: port.protocol,
+                            ids: [port.id].filter(Boolean)
+                        }))
+                    }));
+
+                if (impactedTeamCIs.length > 0) {
+                    teams.set(team, impactedTeamCIs);
+                }
+            });
+        }
+
+        // Format response
+        const formattedTeams = Array.from(teams.entries()).map(([teamName, ciData]) => ({
+            team: teamName,
+            impactedCIs: ciData
+        }));
+
+        res.status(200).json({
+            success: true,
+            message: 'Current change impact data retrieved successfully',
+            data: {
+                teams: formattedTeams,
+                metadata: {
+                    changeId,
+                    totalTeams: formattedTeams.length,
+                    totalCIs: impactedCIs.size,
+                    severity: changeRecord.impactAnalysis.severity || 'MEDIUM'
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error('Error retrieving current change impact data:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error retrieving current change impact data',
             error: error.message
         });
     }
