@@ -592,7 +592,7 @@ async function updateChangeAnalysis(inputData) {
                 changeId: inputData.change_id,
                 impactedCIs: inputData.impact.affectedCIs,
                 // Add other required fields with default values
-                description: "Change impact analysis",
+                description: inputData.change_description,
                 category: "Impact Analysis",
                 implementationDate: new Date().toISOString()
             },
@@ -715,6 +715,7 @@ exports.getCurrentChangeImpactData = async (req, res) => {
                 teams: formattedTeams,
                 metadata: {
                     changeId,
+                    description: changeRecord.changeRecord.description,
                     totalTeams: formattedTeams.length,
                     totalCIs: impactedCIs.size,
                     severity: changeRecord.impactAnalysis.severity || 'MEDIUM'

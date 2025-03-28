@@ -339,6 +339,7 @@ export class ImpactAnalysisComponent implements OnInit {
     // Use existing data instead of making new API calls
     const formattedData = {
       change_id: this.changeData.changeId,
+      change_description: this.changeData.description,
       impact: {
         affectedCIs: this.impactData.affectedCIs.map((ci: any) => ci.name),
         directImpact: this.impactData.directImpact || [],
