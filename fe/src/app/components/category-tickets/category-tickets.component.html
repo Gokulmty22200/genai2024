@@ -1,0 +1,17 @@
+<mat-card class="cardWithShadow">
+    <mat-card-content class="p-24">
+        <div class="d-flex w-100 mb-4" style="justify-content: center;">
+            <mat-card-title>Change Tickets by Category</mat-card-title>
+        </div>
+        <apx-chart 
+            [series]="categoryChart.series"
+            [chart]="categoryChart.chart"
+            [dataLabels]="categoryChart.dataLabels"
+            [plotOptions]="categoryChart.plotOptions"
+            [xaxis]="categoryChart.xaxis"
+            [colors]="categoryChart.colors"
+            [legend]="categoryChart.legend"
+            [tooltip]="categoryChart.tooltip">
+        </apx-chart>
+    </mat-card-content>
+</mat-card>

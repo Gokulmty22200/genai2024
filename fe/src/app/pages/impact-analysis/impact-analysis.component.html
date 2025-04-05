@@ -46,17 +46,6 @@
   </mat-card>
 </mat-tab>
 
-      <mat-tab label="Relationships">
-        <mat-card class="ci-section">
-          <mat-card-header>
-            <!-- <mat-card-title>Parent Child Relationships</mat-card-title> -->
-          </mat-card-header>
-          <mat-card-content>
-            <app-parent-child *ngIf="selectedTab === 2" [relationshipData]="relationshipData"></app-parent-child>
-          </mat-card-content>
-        </mat-card>
-      </mat-tab>
-
       <!-- Impacted CIs Tab -->
       <mat-tab label="Affected CI's">
         <mat-card class="ci-section">
@@ -64,10 +53,23 @@
             <!-- <mat-card-title>Configuration Items Impact</mat-card-title> -->
           </mat-card-header>
           <mat-card-content>
-            <app-affected-ci *ngIf="selectedTab === 3" [impactData]="impactData"></app-affected-ci>
+            <app-affected-ci *ngIf="selectedTab === 2" [impactData]="impactData"></app-affected-ci>
           </mat-card-content>
         </mat-card>
       </mat-tab>
+
+      <mat-tab label="Relationships">
+        <mat-card class="ci-section">
+          <mat-card-header>
+            <!-- <mat-card-title>Parent Child Relationships</mat-card-title> -->
+          </mat-card-header>
+          <mat-card-content>
+            <app-parent-child *ngIf="selectedTab === 3" [relationshipData]="relationshipData"></app-parent-child>
+          </mat-card-content>
+        </mat-card>
+      </mat-tab>
+
+
       
       <!-- Impacted Users Tab -->
       <mat-tab label="Affected User Groups">

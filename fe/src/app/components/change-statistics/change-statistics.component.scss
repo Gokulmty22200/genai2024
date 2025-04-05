@@ -1,0 +1,27 @@
+:host {
+    display: block;
+    margin: 1rem;
+  }
+  
+  .chart-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    width: 100%;
+  }
+  
+  .chart-wrapper {
+    min-width: 0; // Prevents overflow
+    width: 100%;
+  }
+  
+  .cardWithShadow {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  // Responsive layout for smaller screens
+  @media (max-width: 992px) {
+    .chart-container {
+      grid-template-columns: 1fr;
+    }
+  }

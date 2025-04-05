@@ -1,0 +1,33 @@
+<mat-card class="cardWithShadow">
+    <mat-card-content class="p-24">
+        <div class="d-flex w-100 mb-4" style="justify-content: center;">
+            <mat-card-title>Change Statistics</mat-card-title>
+        </div>
+        <div class="chart-container row">
+            <div class="chart-wrapper col-lg-6">
+                <apx-chart
+                    [series]="statusChartOptions.series"
+                    [chart]="statusChartOptions.chart"
+                    [labels]="statusChartOptions.labels"
+                    [colors]="statusChartOptions.colors"
+                    [legend]="statusChartOptions.legend"
+                    [dataLabels]="statusChartOptions.dataLabels"
+                    [tooltip]="statusChartOptions.tooltip"
+                    [title]="statusChartOptions.title">
+                </apx-chart>
+            </div>
+            <div class="chart-wrapper col-lg-6">
+                <apx-chart
+                    [series]="typeChartOptions.series"
+                    [chart]="typeChartOptions.chart"
+                    [labels]="typeChartOptions.labels"
+                    [colors]="typeChartOptions.colors"
+                    [legend]="typeChartOptions.legend"
+                    [dataLabels]="typeChartOptions.dataLabels"
+                    [tooltip]="typeChartOptions.tooltip"
+                    [title]="typeChartOptions.title">
+                </apx-chart>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

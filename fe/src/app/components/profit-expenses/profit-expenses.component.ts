@@ -51,76 +51,117 @@ export interface profitExpanceChart {
 export class AppProfitExpensesComponent {
 
   @ViewChild('chart') chart: ChartComponent = Object.create(null);
-
   public profitExpanceChart!: Partial<profitExpanceChart> | any;
 
-  months: month[] = [
-    { value: 'mar', viewValue: 'Sep 2024' },
-    { value: 'apr', viewValue: 'Oct 2024' },
-    { value: 'june', viewValue: 'Nov 2024' },
-  ];
-
-
   constructor() {
-
-    // sales overview chart
     this.profitExpanceChart = {
       series: [
         {
-          name: 'Eanings this month',
-          data: [9, 5, 3, 7, 5, 10, 3],
+          name: 'Tickets',
+          data: [
+            // {x: '2024', y: 460},
+            // {x: 'Q1 2024', y: 88},
+            // {x: 'Jan', y: 40},
+            {x: 'Feb', y: 42},
+            {x: 'Mar', y: 46},
+            // {x: 'Q2 2024', y: 106},
+            {x: 'Apr', y: 32},
+            {x: 'May', y: 39},
+            {x: 'Jun', y: 35},
+            // {x: 'Q3 2024', y: 131},
+            {x: 'Jul', y: 48},
+            {x: 'Aug', y: 47},
+            {x: 'Sep', y: 36},
+            // {x: 'Q4 2024', y: 135},
+            {x: 'Oct', y: 41},
+            {x: 'Nov', y: 49},
+            {x: 'Dec', y: 45},
+            // {x: '2025', y: 40},
+            // {x: 'Q1 2025', y: 40},
+            {x: 'Jan', y: 40}
+          ],
           color: '#0085db',
-        },
-        {
-          name: 'Expense this month',
-          data: [6, 3, 9, 5, 4, 6, 4],
-          color: '#fb977d',
-        },
+        }
       ],
-
       grid: {
         borderColor: 'rgba(0,0,0,0.1)',
         strokeDashArray: 3,
       },
-      plotOptions: {
-        bar: {
-          horizontal: false,
-          columnWidth: '30%',
-          borderRadius: 4,
-          endingShape: "rounded",
-        },
-      },
       chart: {
         type: 'bar',
-        height: 390,
+        height: 450, // Increased height for better visibility
         offsetY: 10,
         foreColor: '#adb0bb',
         fontFamily: 'inherit',
         toolbar: { show: false },
       },
-      dataLabels: { enabled: false },
-      markers: { size: 0 },
-      legend: { show: false },
       xaxis: {
         type: 'category',
-        categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        axisTicks: {
-          show: false,
-        },
-        axisBorder: {
-          show: false,
-        },
+        axisTicks: { show: false },
+        axisBorder: { show: false },
         labels: {
-          style: { cssClass: 'grey--text lighten-2--text fill-color' },
+          style: { 
+            cssClass: 'grey--text lighten-2--text fill-color',
+            fontSize: '12px'
+          },
+          rotate: -45,
+          rotateAlways: true
+        },
+        group: {
+          groups: [
+            { title: 'Q1 2024', cols: 2 },
+            { title: 'Q2 2024', cols: 3 },
+            { title: 'Q3 2024', cols: 3 },
+            { title: 'Q4 2024', cols: 3 },
+            { title: 'Q1 2025', cols: 1 }
+          ],
+          style: {
+            fontSize: '12px',
+            fontWeight: 600,
+            colors: ['#555']
+          }
+        }
+      },
+      yaxis: {
+        title: {
+          text: 'Number of Tickets'
+        },
+        min: 0,
+        max: 100,
+        tickAmount: 5
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: function (val: number) {
+          return val;
+        },
+        style: {
+          fontSize: '10px'
+        },
+        offsetY: -20
+      },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '80%',
+          borderRadius: 4,
+          endingShape: "rounded",
         },
       },
-      stroke: {
-        show: true,
-        width: 5,
-        colors: ['transparent'],
+      // Highlight quarters with different colors
+      colors: ['#0085db', '#00E396', '#0085db', '#0085db', '#0085db', 
+               '#FEB019', '#0085db', '#0085db', '#0085db',
+               '#FF4560', '#0085db', '#0085db', '#0085db',
+               '#775DD0', '#0085db', '#0085db', '#0085db',
+               '#0085db', '#00E396', '#0085db'],
+      tooltip: {
+        theme: 'light',
+        y: {
+          formatter: function(val: number) {
+            return val + " tickets";
+          }
+        }
       },
-      tooltip: { theme: 'light' },
-
       responsive: [
         {
           breakpoint: 600,
@@ -134,6 +175,5 @@ export class AppProfitExpensesComponent {
         },
       ],
     };
-
   }
 }
