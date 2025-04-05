@@ -79,10 +79,10 @@ export const navItems: NavItem[] = [
     bgcolor: 'primary',
     route: '/extra/change-ticket',
   },
-  {
-    displayName: 'Talk to Servicenow',
-    iconName: 'aperture',
-    bgcolor: 'primary',
-    route: '/extra/chat-window',
-  },
+  // {
+  //   displayName: 'Talk to Servicenow',
+  //   iconName: 'aperture',
+  //   bgcolor: 'primary',
+  //   route: '/extra/chat-window',
+  // },
 ];
