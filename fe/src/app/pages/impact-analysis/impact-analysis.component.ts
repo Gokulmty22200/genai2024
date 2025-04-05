@@ -118,7 +118,7 @@ export class ImpactAnalysisComponent implements OnInit {
   isLoadingImages = false;
   architectureDiagramError = false;
   scriptError = false;
-  readonly BACKUP_DIAGRAM_PATH = 'assets/images/architecture_diagram.png';
+  readonly BACKUP_DIAGRAM_PATH = 'assets/images/';
   readonly BACKUP_SCRIPT_PATH = 'assets/images/script.py';
   
   constructor(private ticketService: TicketService,private http: HttpClient, private serviceNow : ServiceNowService, private route: ActivatedRoute ) {
@@ -158,7 +158,7 @@ loadImages(): void {
           this.architectureDiagramBlob = URL.createObjectURL(response.diagram);
         } else if(diagramUrl){
           // Use backup diagram
-          this.architectureDiagramBlob = this.BACKUP_DIAGRAM_PATH;
+          this.architectureDiagramBlob = this.BACKUP_DIAGRAM_PATH+this.changeData.changeId+'.png';
         }
 
         if (response.script) {
@@ -180,7 +180,7 @@ loadImages(): void {
         console.error('Error in loadImages:', error);
         this.isLoadingImages = false;
         // Use backup assets on error
-        this.architectureDiagramBlob = this.BACKUP_DIAGRAM_PATH;
+        this.architectureDiagramBlob = this.BACKUP_DIAGRAM_PATH+this.changeData.changeId+'.png';
         this.loadBackupScript();
       }
     });
