@@ -11,12 +11,10 @@ import { environment } from 'src/environments/environment';
 export class ServiceNowService {
 
   //For Production 
-    private serviceNowUrl = 'https://dev221653.service-now.com/api/now/table';
-    private serviceNowFileUrl = 'https://dev221653.service-now.com/api/now/attachment';
+    private serviceNowUrl = 'https://dev221653.service-now.com/api/now';
 
     //For Local
-    // private serviceNowUrl = '/api/now/table';
-    // private serviceNowFileUrl = 'api/now/attachment';
+    // private serviceNowUrl = '/api/now';
     
     queryParams?: string;
   constructor(private http: HttpClient) { }
@@ -24,7 +22,7 @@ export class ServiceNowService {
   getChangeTicketData(): Observable<ChangeTicket[]> {
     // this.serviceNowUrl = '/api/now/table';
     this.queryParams = 'sysparm_query=numberINCHG0030008%2CCHG0030006%2CCHG0030005&sysparm_fields=reason%2Cparent%2Cwatch_list%2Cupon_reject%2Csys_updated_on%2Ctype%2Capproval_history%2Ctest_plan%2Cnumber%2Ccab_delegate%2Crequested_by_date%2Cstate%2Csys_created_by%2Cknowledge%2Corder%2Cphase%2Ccmdb_ci%2Cdelivery_plan%2Cimpact%2Ccontract%2Cactive%2Cwork_notes_list%2Cpriority%2Csys_domain_path%2Ccab_recommendation%2Cproduction_system%2Creview_date%2Crequested_by%2Cbusiness_duration%2Cgroup_list%2Cchange_plan%2Capproval_set%2Cimplementation_plan%2Cuniversal_request%2Cend_date%2Cshort_description%2Ccorrelation_display%2Cwork_start%2Cdelivery_task%2Coutside_maintenance_schedule%2Cadditional_assignee_list%2Cstd_change_producer_version%2Csys_class_name%2Cservice_offering%2Cclosed_by%2Cfollow_up%2Creview_status%2Creassignment_count%2Cstart_date%2Cassigned_to%2Csla_due%2Ccomments_and_work_notes%2Cescalation%2Cupon_approval%2Ccorrelation_id%2Cmade_sla%2Cbackout_plan%2Cconflict_status%2Ctask_effective_number%2Csys_updated_by%2Copened_by%2Cuser_input%2Csys_created_on%2Con_hold_task%2Csys_domain%2Croute_reason%2Cclosed_at%2Creview_comments%2Cbusiness_service%2Ctime_worked%2Cchg_model%2Cexpected_start%2Copened_at%2Cwork_end%2Cphase_state%2Cwork_notes%2Cclose_code%2Cassignment_group%2Cdescription%2Con_hold_reason%2Ccalendar_duration%2Cclose_notes%2Csys_id%2Ccontact_type%2Ccab_required%2Curgency%2Cscope%2Ccompany%2Cjustification%2Cactivity_due%2Ccomments%2Capproval%2Cdue_date%2Csys_mod_count%2Con_hold%2Csys_tags%2Ccab_date_time%2Cconflict_last_run%2Cunauthorized%2Crisk%2Clocation%2Ccategory%2Crisk_impact_analysis&sysparm_display_value=all';
-    const url = `${this.serviceNowUrl}/change_request?${this.queryParams}`;
+    const url = `${this.serviceNowUrl}/table/change_request?${this.queryParams}`;
     const headers = new HttpHeaders()
       .set('Authorization', 'Basic ' + btoa('Virtusaicon:Virtusa25@'))
       .set('Accept', 'application/json')
@@ -41,7 +39,7 @@ export class ServiceNowService {
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json');
 
-  const url = `${this.serviceNowUrl}/cmdb_rel_ci?${this.queryParams}`;
+  const url = `${this.serviceNowUrl}/table/cmdb_rel_ci?${this.queryParams}`;
 
   return this.http.get<any>(url, { headers }).pipe(
     map(response => ({
@@ -71,7 +69,7 @@ export class ServiceNowService {
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json');
 
-  const url = `${this.serviceNowUrl}/cmdb_ci?${this.queryParams}`;
+  const url = `${this.serviceNowUrl}/table/cmdb_ci?${this.queryParams}`;
   return this.http.get<any>(url, { headers });
   }
 
@@ -82,7 +80,7 @@ export class ServiceNowService {
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json');
 
-  const url = `${this.serviceNowUrl}/task_ci?${this.queryParams}`;
+  const url = `${this.serviceNowUrl}/table/task_ci?${this.queryParams}`;
   return this.http.get<any>(url, { headers });
   }
 
@@ -91,7 +89,7 @@ export class ServiceNowService {
     .set('Authorization', 'Basic ' + btoa('Virtusaicon:Virtusa25@'))
     .set('Accept', '*/*')
     .set('Content-Type', '*/*');
-  const url = `${this.serviceNowFileUrl}/${imageParams}/file`;
+  const url = `${this.serviceNowUrl}/attachment/${imageParams}/file`;
     return this.http.get(url, {
       headers,responseType: 'blob'
     });
@@ -102,7 +100,7 @@ export class ServiceNowService {
     .set('Authorization', 'Basic ' + btoa('Virtusaicon:Virtusa25@'))
     .set('Accept', '*/*')
     .set('Content-Type', '*/*');
-  const url = `${this.serviceNowFileUrl}/${sriptParams}/file`;
+  const url = `${this.serviceNowUrl}/attachment/${sriptParams}/file`;
   return this.http.get(url, {
     headers,
     responseType: 'blob'
