@@ -8,7 +8,7 @@ import { ServiceNowService } from 'src/app/services/service-now.service';
 import { ActivatedRoute } from '@angular/router';
 import { ParentChildComponent } from "../parent-child/parent-child.component";
 import { AffectedCiComponent } from "../affected-ci/affected-ci.component";
-import { forkJoin, map } from 'rxjs';
+import { forkJoin, map, of } from 'rxjs';
 
 interface Node {
   id: string;
@@ -72,6 +72,18 @@ interface PortProtocolGroup {
   }[];
 }
 
+interface changeData {
+  changeId: string;
+  impactedCIs?: any;
+  category: string;
+  description: string;
+  implementationDate: string;
+}
+
+interface ImageUrls {
+  [key: string]: string;
+}
+
 @Component({
   selector: 'app-impact-analysis',
   standalone: true,
@@ -82,9 +94,17 @@ interface PortProtocolGroup {
 export class ImpactAnalysisComponent implements OnInit {
   trafficData: any[] = [];
   isLoading = true;
-  changeData: any;
+  changeData: changeData;
   selectedTab = 0;
-  imagePath = 'assets/images/architecture_diagram.png';
+  // imagePath = 'assets/images/architecture_diagram.png';
+  imageApiUrls: ImageUrls = {
+    'CHG0030005': '69b3990083f022101767e270ceaad3cd',
+    'CHG0030008': '30765dc083f022101767e270ceaad32f'
+  };
+  
+  scriptApiUrls: ImageUrls = {
+    'CHG0030008': 'f8e619c083f022101767e270ceaad324'
+  };
   imageError = false;
   relationshipData: any = null;
   impactData: any = null
@@ -92,6 +112,11 @@ export class ImpactAnalysisComponent implements OnInit {
   affectedCi: any = null;
   protocolGroups: PortProtocolGroup[] = [];
   ipData: any = null;
+  architectureDiagramBlob: string | null = null;
+  scriptBlob: string | null = null;
+  isLoadingImages = false;
+  architectureDiagramError = false;
+  scriptError = false;
 
   constructor(private ticketService: TicketService, private serviceNow : ServiceNowService, private route: ActivatedRoute ) {
   }
@@ -101,11 +126,47 @@ export class ImpactAnalysisComponent implements OnInit {
       if (params['data']) {
         this.changeData = JSON.parse(params['data']);
         console.log('Change Data:', this.changeData);
+        this.loadImages(); 
     }
     });
     this.getImpactedCIs();
     // this.getRelationshipData();
 }
+
+  loadImages(): void {
+    if (this.changeData?.changeId) {
+      this.isLoadingImages = true;
+      
+      const diagramUrl = this.imageApiUrls[this.changeData.changeId];
+      const scriptUrl = this.scriptApiUrls[this.changeData.changeId];
+
+      forkJoin({
+        diagram: diagramUrl ? this.serviceNow.getArchitectureDiagram(diagramUrl) : of(null),
+        script: scriptUrl ? this.serviceNow.getChangeScript(scriptUrl) : of(null)
+      }).subscribe({
+        next: async (response: { diagram: Blob | null; script: Blob | null }) => {
+          // Convert blobs to object URLs
+          if (response.diagram) {
+            this.architectureDiagramBlob = URL.createObjectURL(response.diagram);
+          }
+          if (response.script) {
+            this.scriptBlob = await response.script.text();
+          }
+          this.isLoadingImages = false;
+        },
+        error: (error) => {
+          console.error('Error loading images:', error);
+          this.isLoadingImages = false;
+          this.architectureDiagramError = true;
+          this.scriptError = true;
+        }
+      });
+    }
+  }
+
+  handleArchitectureDiagramError(): void {
+    this.architectureDiagramError = true;
+  }
 
   getIpData(): void {
     this.serviceNow.getIpData()
@@ -126,7 +187,13 @@ export class ImpactAnalysisComponent implements OnInit {
       .subscribe({
         next: (data: { result: any }) => {
           if (!this.changeData) {
-            this.changeData = {};
+            this.changeData = {
+              changeId: '',
+              category: '',
+              description: '',
+              implementationDate: '',
+              impactedCIs: null
+            };
           }
           
           // Extract CI names from response and store in changeData
@@ -385,6 +452,16 @@ export class ImpactAnalysisComponent implements OnInit {
         console.error('Error updating change impact data:', error);
       }
     });
+  }
+
+  ngOnDestroy() {
+    // Revoke object URLs to prevent memory leaks
+    if (this.architectureDiagramBlob) {
+      URL.revokeObjectURL(this.architectureDiagramBlob);
+    }
+    if (this.scriptBlob) {
+      URL.revokeObjectURL(this.scriptBlob);
+    }
   }
 
 }

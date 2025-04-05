@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { map, mergeMap, Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { ChangeTicket } from '../interface/change-ticket.interface';
@@ -10,8 +10,13 @@ import { environment } from 'src/environments/environment';
 })
 export class ServiceNowService {
 
+  //For Production 
     private serviceNowUrl = 'https://dev221653.service-now.com/api/now/table';
+    private serviceNowFileUrl = 'https://dev221653.service-now.com/api/now/attachment';
+
+    //For Local
     // private serviceNowUrl = '/api/now/table';
+    // private serviceNowFileUrl = 'api/now/attachment';
     
     queryParams?: string;
   constructor(private http: HttpClient) { }
@@ -79,5 +84,28 @@ export class ServiceNowService {
 
   const url = `${this.serviceNowUrl}/task_ci?${this.queryParams}`;
   return this.http.get<any>(url, { headers });
+  }
+
+  getArchitectureDiagram(imageParams: string): Observable<Blob> {
+    const headers = new HttpHeaders()
+    .set('Authorization', 'Basic ' + btoa('Virtusaicon:Virtusa25@'))
+    .set('Accept', '*/*')
+    .set('Content-Type', '*/*');
+  const url = `${this.serviceNowFileUrl}/${imageParams}/file`;
+    return this.http.get(url, {
+      headers,responseType: 'blob'
+    });
+  }
+  
+  getChangeScript(sriptParams: string): Observable<Blob> {
+    const headers = new HttpHeaders()
+    .set('Authorization', 'Basic ' + btoa('Virtusaicon:Virtusa25@'))
+    .set('Accept', '*/*')
+    .set('Content-Type', '*/*');
+  const url = `${this.serviceNowFileUrl}/${sriptParams}/file`;
+  return this.http.get(url, {
+    headers,
+    responseType: 'blob'
+  });
   }
 }

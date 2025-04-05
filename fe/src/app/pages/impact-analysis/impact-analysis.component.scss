@@ -402,3 +402,49 @@ table {
     }
   }
 }
+
+.script-image {
+  width: 100%;
+  max-width: 1200px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.placeholder-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: #666;
+  
+  mat-icon {
+    margin-right: 8px;
+  }
+}
+
+.ci-section {
+  margin: 1rem;
+  
+  mat-card-content {
+    padding: 1rem;
+  }
+}
+
+.script-container {
+  background: #f5f5f5;
+  padding: 1rem;
+  border-radius: 4px;
+  
+  pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    
+    code {
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+  }
+}

@@ -51,9 +51,9 @@ export class ChangeTicketComponent {
 
   getChangeTicketData(): void {
     const dates = {
-      'CHG0030005': '04-02-2024',
-      'CHG0030006': '04-03-2024',
-      'CHG0030008': '04-04-2024'
+      'CHG0030005': '04-15-2025',
+      'CHG0030006': '04-15-2025',
+      'CHG0030008': '04-15-2025'
     };
     this.serviceNow.getChangeTicketData()
       .pipe(
