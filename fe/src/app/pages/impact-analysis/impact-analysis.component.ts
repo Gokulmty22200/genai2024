@@ -8,7 +8,8 @@ import { ServiceNowService } from 'src/app/services/service-now.service';
 import { ActivatedRoute } from '@angular/router';
 import { ParentChildComponent } from "../parent-child/parent-child.component";
 import { AffectedCiComponent } from "../affected-ci/affected-ci.component";
-import { forkJoin, map, of } from 'rxjs';
+import { catchError, forkJoin, map, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 interface Node {
   id: string;
@@ -117,8 +118,10 @@ export class ImpactAnalysisComponent implements OnInit {
   isLoadingImages = false;
   architectureDiagramError = false;
   scriptError = false;
-
-  constructor(private ticketService: TicketService, private serviceNow : ServiceNowService, private route: ActivatedRoute ) {
+  readonly BACKUP_DIAGRAM_PATH = 'assets/images/architecture_diagram.png';
+  readonly BACKUP_SCRIPT_PATH = 'assets/images/script.py';
+  
+  constructor(private ticketService: TicketService,private http: HttpClient, private serviceNow : ServiceNowService, private route: ActivatedRoute ) {
   }
 
   ngOnInit() {
@@ -133,36 +136,67 @@ export class ImpactAnalysisComponent implements OnInit {
     // this.getRelationshipData();
 }
 
-  loadImages(): void {
-    if (this.changeData?.changeId) {
-      this.isLoadingImages = true;
-      
-      const diagramUrl = this.imageApiUrls[this.changeData.changeId];
-      const scriptUrl = this.scriptApiUrls[this.changeData.changeId];
+loadImages(): void {
+  if (this.changeData?.changeId) {
+    this.isLoadingImages = true;
+    
+    const diagramUrl = this.imageApiUrls[this.changeData.changeId];
+    const scriptUrl = this.scriptApiUrls[this.changeData.changeId];
 
-      forkJoin({
-        diagram: diagramUrl ? this.serviceNow.getArchitectureDiagram(diagramUrl) : of(null),
-        script: scriptUrl ? this.serviceNow.getChangeScript(scriptUrl) : of(null)
-      }).subscribe({
-        next: async (response: { diagram: Blob | null; script: Blob | null }) => {
-          // Convert blobs to object URLs
-          if (response.diagram) {
-            this.architectureDiagramBlob = URL.createObjectURL(response.diagram);
-          }
-          if (response.script) {
-            this.scriptBlob = await response.script.text();
-          }
-          this.isLoadingImages = false;
-        },
-        error: (error) => {
-          console.error('Error loading images:', error);
-          this.isLoadingImages = false;
-          this.architectureDiagramError = true;
-          this.scriptError = true;
+    forkJoin({
+      diagram: diagramUrl ? 
+        this.serviceNow.getArchitectureDiagram(diagramUrl).pipe(
+          catchError(() => of(null))
+        ) : of(null),
+      script: scriptUrl ? 
+        this.serviceNow.getChangeScript(scriptUrl).pipe(
+          catchError(() => of(null))
+        ) : of(null)
+    }).subscribe({
+      next: async (response: { diagram: Blob | null; script: Blob | null }) => {
+        if (response.diagram) {
+          this.architectureDiagramBlob = URL.createObjectURL(response.diagram);
+        } else if(diagramUrl){
+          // Use backup diagram
+          this.architectureDiagramBlob = this.BACKUP_DIAGRAM_PATH;
         }
-      });
-    }
+
+        if (response.script) {
+          this.scriptBlob = await response.script.text();
+        } else if(scriptUrl) {
+          // Load backup script
+          this.http.get(this.BACKUP_SCRIPT_PATH, { responseType: 'text' })
+            .subscribe(
+              (scriptContent: any) => this.scriptBlob = scriptContent,
+              (error: any) => {
+                console.error('Error loading backup script:', error);
+                this.scriptError = true;
+              }
+            );
+        }
+        this.isLoadingImages = false;
+      },
+      error: (error) => {
+        console.error('Error in loadImages:', error);
+        this.isLoadingImages = false;
+        // Use backup assets on error
+        this.architectureDiagramBlob = this.BACKUP_DIAGRAM_PATH;
+        this.loadBackupScript();
+      }
+    });
   }
+}
+
+private loadBackupScript(): void {
+  this.http.get(this.BACKUP_SCRIPT_PATH, { responseType: 'text' })
+    .subscribe(
+      (scriptContent: any) => this.scriptBlob = scriptContent,
+      (error: any) => {
+        console.error('Error loading backup script:', error);
+        this.scriptError = true;
+      }
+    );
+}
 
   handleArchitectureDiagramError(): void {
     this.architectureDiagramError = true;

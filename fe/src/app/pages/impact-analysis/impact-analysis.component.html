@@ -2,55 +2,49 @@
   <mat-card-content>
     <mat-tab-group [(selectedIndex)]="selectedTab">
 
-      <mat-tab label="Architecture Diagram">
-        <mat-card class="ci-section">
-          <mat-card-header>
-            
-            <!-- <mat-card-title>Architecture Diagram</mat-card-title> -->
-          </mat-card-header>
-          <mat-card-content>
-            <div class="architecture-diagram" *ngIf="!isLoadingImages && architectureDiagramBlob">
-              <img [src]="architectureDiagramBlob" 
-                   (error)="handleArchitectureDiagramError()"
-                   alt="Architecture Diagram"
-                   class="diagram-image">
-            </div>
-            <p class="placeholder-text" *ngIf="!architectureDiagramBlob">
-              <mat-icon>info</mat-icon>
-              {{ !isLoadingImages ? 'No architecture diagram available' : architectureDiagramError ? 'Error loading architecture diagram' : 'Loading..' }}
-            </p>            
-            <!-- <p class="placeholder-text" *ngIf="imageError">
-              <mat-icon>info</mat-icon>Image not available
-            </p> -->
-          </mat-card-content>
-        </mat-card>
-      </mat-tab>
+     <!-- Architecture Diagram tab -->
+<mat-tab label="Architecture Diagram">
+  <mat-card class="ci-section">
+    <mat-card-content>
+      <div class="architecture-diagram" *ngIf="!isLoadingImages && architectureDiagramBlob">
+        <img [src]="architectureDiagramBlob" 
+             (error)="handleArchitectureDiagramError()"
+             alt="Architecture Diagram"
+             class="diagram-image">
+      </div>
+      <div class="loader-container" *ngIf="isLoadingImages">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading diagram...</p>
+      </div>
+      <p class="placeholder-text" *ngIf="!architectureDiagramBlob && !isLoadingImages">
+        <mat-icon>info</mat-icon>
+        No architecture diagram available
+      </p>
+    </mat-card-content>
+  </mat-card>
+</mat-tab>
 
-      <mat-tab label="Script">
-        <mat-card class="ci-section">
-          <mat-card-header>
-            <!-- <mat-card-title>Change Script</mat-card-title> -->
-          </mat-card-header>
-          <mat-card-content>
-            <!-- Loading state -->
-            <div class="loader-container" *ngIf="isLoadingImages">
-              <mat-spinner diameter="40"></mat-spinner>
-              <p>Loading script...</p>
-            </div>
-      
-            <!-- Script display -->
-            <div class="script-container" *ngIf="!isLoadingImages && scriptBlob">
-              <pre><code [class]="'language-python'">{{scriptBlob}}</code></pre>
-            </div>
-      
-            <!-- Error/No data state -->
-            <div class="placeholder-text" *ngIf="!isLoadingImages && !scriptBlob">
-              <p>
-              <mat-icon>info</mat-icon> No script Available</p>
-            </div>
-          </mat-card-content>
-        </mat-card>
-      </mat-tab>
+<!-- Script tab -->
+<mat-tab label="Script">
+  <mat-card class="ci-section">
+    <mat-card-content>
+      <div class="loader-container" *ngIf="isLoadingImages">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading script...</p>
+      </div>
+
+      <div class="script-container" *ngIf="!isLoadingImages && scriptBlob">
+        <pre><code class="language-python">{{scriptBlob}}</code></pre>
+      </div>
+
+      <div class="placeholder-text" *ngIf="!isLoadingImages && !scriptBlob">
+        <p>
+          <mat-icon>info</mat-icon> No script available
+        </p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</mat-tab>
 
       <mat-tab label="Relationships">
         <mat-card class="ci-section">
