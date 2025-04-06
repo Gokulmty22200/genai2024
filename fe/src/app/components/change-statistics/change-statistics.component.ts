@@ -24,7 +24,7 @@ export class ChangeStatisticsComponent {
         height: 350,
         width: '100%'
       },
-      labels: ['Failed / Cancelled', 'Implemented and Closed', 'Rolled Back'],
+      labels: ['Cancelled', 'Implemented and Closed', 'Rolled Back'],
       title: {
         text: 'Change Status Distribution',
         align: 'center',
@@ -33,7 +33,7 @@ export class ChangeStatisticsComponent {
           fontWeight: 600
         }
       },
-      colors: ['#FF4560', '#00E396', '#FEB019'],
+      colors: ['#FE9900', '#00E396', '#FFDE59'],
       legend: {
         position: 'bottom'
       },
