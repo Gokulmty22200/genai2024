@@ -3,8 +3,8 @@
         <div class="d-flex w-100 mb-4" style="justify-content: center;">
             <mat-card-title>Change Statistics</mat-card-title>
         </div>
-        <div class="chart-container row">
-            <div class="chart-wrapper col-md-6">
+        <div class="chart-container">
+            <div class="chart-wrapper">
                 <apx-chart
                     [series]="statusChartOptions.series"
                     [chart]="statusChartOptions.chart"
@@ -16,7 +16,8 @@
                     [title]="statusChartOptions.title">
                 </apx-chart>
             </div>
-            <div class="chart-wrapper col-md-6">
+            <mat-divider></mat-divider>
+            <div class="chart-wrapper">
                 <apx-chart
                     [series]="typeChartOptions.series"
                     [chart]="typeChartOptions.chart"
@@ -26,6 +27,22 @@
                     [dataLabels]="typeChartOptions.dataLabels"
                     [tooltip]="typeChartOptions.tooltip"
                     [title]="typeChartOptions.title">
+                </apx-chart>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="stacked-chart-container mt-4">
+                <apx-chart
+                    [series]="stackedChartOptions.series"
+                    [chart]="stackedChartOptions.chart"
+                    [xaxis]="stackedChartOptions.xaxis"
+                    [yaxis]="stackedChartOptions.yaxis"
+                    [dataLabels]="stackedChartOptions.dataLabels"
+                    [plotOptions]="stackedChartOptions.plotOptions"
+                    [colors]="stackedChartOptions.colors"
+                    [legend]="stackedChartOptions.legend"
+                    [fill]="stackedChartOptions.fill"
+                    [tooltip]="stackedChartOptions.tooltip"
+                    [title]="stackedChartOptions.title">
                 </apx-chart>
             </div>
         </div>

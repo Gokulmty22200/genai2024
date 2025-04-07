@@ -99,12 +99,12 @@ export class ImpactAnalysisComponent implements OnInit {
   selectedTab = 0;
   // imagePath = 'assets/images/architecture_diagram.png';
   imageApiUrls: ImageUrls = {
-    'CHG0030005': '69b3990083f022101767e270ceaad3cd',
-    'CHG0030008': '30765dc083f022101767e270ceaad32f'
+    'CHG0030005': 'ad08b885837022101767e270ceaad33f',
+    'CHG0030008': '047ee489833022101767e270ceaad35b'
   };
   
   scriptApiUrls: ImageUrls = {
-    'CHG0030008': 'f8e619c083f022101767e270ceaad324'
+    'CHG0030008': '047ee489833022101767e270ceaad359'
   };
   imageError = false;
   relationshipData: any = null;

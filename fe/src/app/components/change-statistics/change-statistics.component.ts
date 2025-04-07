@@ -11,9 +11,11 @@ import { NgApexchartsModule, ChartComponent } from 'ng-apexcharts';
 export class ChangeStatisticsComponent {
   @ViewChild('statusChart') statusChart!: ChartComponent;
   @ViewChild('typeChart') typeChart!: ChartComponent;
-  
+  @ViewChild('stackedChart') stackedChart!: ChartComponent;
+
   public statusChartOptions: any;
   public typeChartOptions: any;
+  public stackedChartOptions: any;
 
   constructor() {
     // Status Chart Configuration
@@ -33,7 +35,7 @@ export class ChangeStatisticsComponent {
           fontWeight: 600
         }
       },
-      colors: ['#FE9900', '#00E396', '#FFDE59'],
+      colors: ['#FE9900', '#008FFB', '#E4080A'],
       legend: {
         position: 'bottom'
       },
@@ -103,5 +105,73 @@ export class ChangeStatisticsComponent {
         }
       }]
     };
+    // Stacked Column Chart Configuration
+  this.stackedChartOptions = {
+    series: [
+      {
+        name: 'Major',
+        data: [13, 222, 43]
+      },
+      {
+        name: 'Medium',
+        data: [13, 182, 27]
+      }
+    ],
+    chart: {
+      type: 'bar',
+      height: 350,
+      stacked: true,
+      toolbar: {
+        show: false
+      }
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: '55%',
+      },
+    },
+    title: {
+      text: 'Change Distribution by Status and Type',
+      align: 'center',
+      style: {
+        fontSize: '16px',
+        fontWeight: 600
+      }
+    },
+    xaxis: {
+      categories: ['Cancelled', 'Implemented and Closed', 'Rolled Back'],
+      labels: {
+        style: {
+          fontSize: '12px'
+        }
+      }
+    },
+    yaxis: {
+      title: {
+        text: 'Number of Changes'
+      }
+    },
+    legend: {
+      position: 'bottom'
+    },
+    fill: {
+      opacity: 1
+    },
+    colors: ['#008FFB', '#775DD0'],
+    dataLabels: {
+      enabled: true,
+      formatter: function(val: number) {
+        return val.toString();
+      }
+    },
+    tooltip: {
+      y: {
+        formatter: function(val: number) {
+          return val + " changes";
+        }
+      }
+    }
+  };
   }
 }

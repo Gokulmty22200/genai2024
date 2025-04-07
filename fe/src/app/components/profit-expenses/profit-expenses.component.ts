@@ -62,23 +62,23 @@ export class AppProfitExpensesComponent {
             // {x: '2024', y: 460},
             // {x: 'Q1 2024', y: 88},
             // {x: 'Jan', y: 40},
-            {x: 'Feb', y: 42},
-            {x: 'Mar', y: 46},
+            {x: `Feb '24`, y: 42},
+            {x: `Mar '24`, y: 46},
             // {x: 'Q2 2024', y: 106},
-            {x: 'Apr', y: 32},
-            {x: 'May', y: 39},
-            {x: 'Jun', y: 35},
-            // {x: 'Q3 2024', y: 131},
-            {x: 'Jul', y: 48},
-            {x: 'Aug', y: 47},
-            {x: 'Sep', y: 36},
-            // {x: 'Q4 2024', y: 135},
-            {x: 'Oct', y: 41},
-            {x: 'Nov', y: 49},
-            {x: 'Dec', y: 45},
+            {x: `Apr '24`, y: 32},
+            {x: `May '24`, y: 39},
+            {x: `Jun '24`, y: 35},
+            // {x: 'Q3 `024 '24`, y: 131},
+            {x: `Jul '24`, y: 48},
+            {x: `Aug '24`, y: 47},
+            {x: `Sep '24`, y: 36},
+            // {x: 'Q4 `024 '24`, y: 135},
+            {x: `Oct '24`, y: 41},
+            {x: `Nov '24`, y: 49},
+            {x: `Dec '24`, y: 45},
             // {x: '2025', y: 40},
             // {x: 'Q1 2025', y: 40},
-            {x: 'Jan', y: 40}
+            {x: `Jan '25`, y: 40}
           ],
           color: '#0085db',
         }
@@ -106,20 +106,6 @@ export class AppProfitExpensesComponent {
           },
           rotate: -45,
           rotateAlways: true
-        },
-        group: {
-          groups: [
-            { title: 'Q1 2024', cols: 2 },
-            { title: 'Q2 2024', cols: 3 },
-            { title: 'Q3 2024', cols: 3 },
-            { title: 'Q4 2024', cols: 3 },
-            { title: 'Q1 2025', cols: 1 }
-          ],
-          style: {
-            fontSize: '12px',
-            fontWeight: 600,
-            colors: ['#555']
-          }
         }
       },
       yaxis: {
