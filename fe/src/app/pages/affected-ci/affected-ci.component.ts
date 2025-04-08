@@ -49,6 +49,36 @@ export class AffectedCiComponent {
         if (params['data']) {
           this.changeData = JSON.parse(params['data']);
           console.log('Change Data:', this.changeData);
+          switch(this.changeData.changeId) {
+            case 'CHG0030005':
+              this.impactData.directImpact = ['IDEAWORKS application'];
+              this.impactData.partialImpact = [
+                'Middleware Application 02',
+                'Web Application 02',
+                'Web Application 01',
+                'Middleware Application 01'
+              ];
+              break;
+              
+            case 'CHG0030006':
+              this.impactData.directImpact = ['IDEAWORKS application'];
+              this.impactData.partialImpact = [`No Partially Affected CI's`];
+              break;
+              
+            case 'CHG0030008':
+              this.impactData.directImpact = [
+                'IDEAWORKS application',
+                'Cryst Application'
+              ];
+              this.impactData.partialImpact = [
+                'Middleware Application 02',
+                'Web Application 02',
+                'Web Application 01',
+                'Middleware Application 01'
+              ];
+              break;
+          }
+          console.log('IMP',this.impactData);
       }
       });
       // this.getRelationshipData();
