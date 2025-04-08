@@ -1,11 +1,13 @@
 import { Component, ViewChild } from '@angular/core';
 import { MaterialModule } from 'src/app/material.module';
 import { NgApexchartsModule, ChartComponent } from 'ng-apexcharts';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-change-statistics',
   standalone: true,
-  imports: [MaterialModule, NgApexchartsModule],
+  imports: [MaterialModule, NgApexchartsModule,CommonModule,FormsModule],
   templateUrl: './change-statistics.component.html'
 })
 export class ChangeStatisticsComponent {
@@ -16,7 +18,10 @@ export class ChangeStatisticsComponent {
   public statusChartOptions: any;
   public typeChartOptions: any;
   public stackedChartOptions: any;
-
+  selectedPeriod = 'FY2024';
+  periods = [
+    { value: 'FY2024', label: 'Feb 2024- Jan 2025' }
+  ];
   constructor() {
     // Status Chart Configuration
     this.statusChartOptions = {

@@ -2,8 +2,8 @@
     <!-- <mat-progress-bar *ngIf="!impactData" mode="indeterminate"></mat-progress-bar> -->
   
     <div *ngIf="!loading && !impactData" class="no-data">
-      <mat-icon>warning</mat-icon>
-      <p>No Impact Analysis data available to display</p>
+      <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading...</p>
     </div>
   
     <div *ngIf="!loading && impactData" class="impact-content">

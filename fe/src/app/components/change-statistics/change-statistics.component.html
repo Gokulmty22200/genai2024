@@ -1,5 +1,15 @@
 <mat-card class="cardWithShadow">
     <mat-card-content class="p-24">
+        <div class="filter-section">
+            <mat-form-field appearance="outline">
+                <mat-label>Period</mat-label>
+                <mat-select [(value)]="selectedPeriod">
+                    <mat-option *ngFor="let period of periods" [value]="period.value">
+                        {{period.label}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
         <div class="d-flex w-100 mb-4" style="justify-content: center;">
             <mat-card-title>Change Statistics</mat-card-title>
         </div>

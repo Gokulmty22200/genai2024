@@ -2,8 +2,8 @@
     <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
   
     <div *ngIf="!loading && !hasData" class="no-data">
-      <mat-icon>warning</mat-icon>
-      <p>No data available to show</p>
+      <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading...</p>
     </div>
   
     <div *ngIf="!loading && hasData" class="hierarchy-view">
