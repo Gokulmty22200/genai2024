@@ -104,7 +104,7 @@ export class ImpactAnalysisComponent implements OnInit {
   };
   
   scriptApiUrls: ImageUrls = {
-    'CHG0030008': '047ee489833022101767e270ceaad359'
+    'CHG0030008': '54ca3d4d837422101767e270ceaad3c6'
   };
   imageError = false;
   relationshipData: any = null;
