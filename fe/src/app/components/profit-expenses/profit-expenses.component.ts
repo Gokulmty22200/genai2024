@@ -57,74 +57,28 @@ export class AppProfitExpensesComponent {
     this.profitExpanceChart = {
       series: [
         {
-          name: 'Tickets',
-          data: [
-            // {x: '2024', y: 460},
-            // {x: 'Q1 2024', y: 88},
-            // {x: 'Jan', y: 40},
-            {x: `Feb '24`, y: 42},
-            {x: `Mar '24`, y: 46},
-            // {x: 'Q2 2024', y: 106},
-            {x: `Apr '24`, y: 32},
-            {x: `May '24`, y: 39},
-            {x: `Jun '24`, y: 35},
-            // {x: 'Q3 `024 '24`, y: 131},
-            {x: `Jul '24`, y: 48},
-            {x: `Aug '24`, y: 47},
-            {x: `Sep '24`, y: 36},
-            // {x: 'Q4 `024 '24`, y: 135},
-            {x: `Oct '24`, y: 41},
-            {x: `Nov '24`, y: 49},
-            {x: `Dec '24`, y: 45},
-            // {x: '2025', y: 40},
-            // {x: 'Q1 2025', y: 40},
-            {x: `Jan '25`, y: 40}
-          ],
-          color: '#0085db',
+          name: 'Major',
+          data: [25, 28, 22, 20, 18, 22, 27, 20, 24, 25, 21, 26]
+        },
+        {
+          name: 'Medium',
+          data: [17, 18, 10, 19, 17, 26, 20, 16, 17, 24, 24, 14]
         }
       ],
+      chart: {
+        type: 'bar',
+        height: 450,
+        stacked: true,
+        toolbar: {
+          show: false
+        },
+        zoom: {
+          enabled: false
+        }
+      },
       grid: {
         borderColor: 'rgba(0,0,0,0.1)',
         strokeDashArray: 3,
-      },
-      chart: {
-        type: 'bar',
-        height: 450, // Increased height for better visibility
-        offsetY: 10,
-        foreColor: '#adb0bb',
-        fontFamily: 'inherit',
-        toolbar: { show: false },
-      },
-      xaxis: {
-        type: 'category',
-        axisTicks: { show: false },
-        axisBorder: { show: false },
-        labels: {
-          style: { 
-            cssClass: 'grey--text lighten-2--text fill-color',
-            fontSize: '12px'
-          },
-          rotate: -45,
-          rotateAlways: true
-        }
-      },
-      yaxis: {
-        title: {
-          text: 'Number of Tickets'
-        },
-        min: 0,
-        max: 100,
-        tickAmount: 5
-      },
-      dataLabels: {
-        enabled: true,
-        formatter: function (val: number) {
-          return val;
-        },
-        style: {
-          fontSize: '10px'
-        },
-        offsetY: -20
       },
       plotOptions: {
         bar: {
@@ -134,32 +88,53 @@ export class AppProfitExpensesComponent {
           endingShape: "rounded",
         },
       },
-      // Highlight quarters with different colors
-      colors: ['#0085db', '#00E396', '#0085db', '#0085db', '#0085db', 
-               '#FEB019', '#0085db', '#0085db', '#0085db',
-               '#FF4560', '#0085db', '#0085db', '#0085db',
-               '#775DD0', '#0085db', '#0085db', '#0085db',
-               '#0085db', '#00E396', '#0085db'],
+      xaxis: {
+        type: 'category',
+        categories: ['Feb-24', 'Mar-24', 'Apr-24', 'May-24', 'Jun-24', 
+                    'Jul-24', 'Aug-24', 'Sep-24', 'Oct-24', 'Nov-24', 
+                    'Dec-24', 'Jan-25'],
+        labels: {
+          style: { 
+            fontSize: '12px'
+          },
+          rotate: -45,
+          rotateAlways: true
+        },
+        axisTicks: { show: false },
+        axisBorder: { show: false }
+      },
+      yaxis: {
+        title: {
+          text: 'Number of Tickets'
+        },
+        min: 0,
+        max: 60,
+        tickAmount: 6
+      },
+      colors: ['#008FFB', '#775DD0'],
+      dataLabels: {
+        enabled: true,
+        formatter: function(val: number) {
+          return val;
+        },
+        style: {
+          fontSize: '10px'
+        }
+      },
+      legend: {
+        position: 'bottom',
+        offsetY: 0
+      },
       tooltip: {
-        theme: 'light',
         y: {
           formatter: function(val: number) {
             return val + " tickets";
           }
         }
       },
-      responsive: [
-        {
-          breakpoint: 600,
-          options: {
-            plotOptions: {
-              bar: {
-                borderRadius: 3,
-              },
-            },
-          },
-        },
-      ],
+      fill: {
+        opacity: 1
+      }
     };
   }
 }

@@ -115,11 +115,11 @@ export class ChangeStatisticsComponent {
     series: [
       {
         name: 'Major',
-        data: [13, 222, 43]
+        data: [222, 43, 13]
       },
       {
         name: 'Medium',
-        data: [13, 182, 27]
+        data: [182, 27, 13]
       }
     ],
     chart: {
@@ -145,7 +145,7 @@ export class ChangeStatisticsComponent {
       }
     },
     xaxis: {
-      categories: ['Cancelled', 'Implemented and Closed', 'Rolled Back'],
+      categories: ['Implemented and Closed', 'Rolled Back', 'Cancelled'],
       labels: {
         style: {
           fontSize: '12px'
