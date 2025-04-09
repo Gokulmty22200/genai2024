@@ -1,213 +1,134 @@
-!pip install diagrams
-
 from diagrams import Diagram, Cluster, Edge
 
-from diagrams.aws.general import Users as InternetUsers
+from diagrams.aws.compute import EC2
 
-from diagrams.aws.general import User as HomeUser
+from diagrams.aws.network import ALB, Route53, InternetGateway, VpnGateway,
+    DirectConnect, Endpoint
 
-from diagrams.aws.general import Users as OfficeUsers
+from diagrams.aws.security import WAF, IdentityAndAccessManagementIam as IAM,
+    IdentityAndAccessManagementIamRole as Role, CloudHSM, AdConnector as AD
 
-from diagrams.aws.general import OfficeBuilding as CorporateDC
+from diagrams.aws.database import RDS
 
-from diagrams.aws.general import InternetAlt2 as internet
-
-from diagrams.aws.network import Route53
-
-from diagrams.aws.compute import EC2Instance as InternetWebClient
-
-from diagrams.aws.network import VpnGateway
-
-from diagrams.aws.network import DirectConnect
-
-from diagrams.aws.compute import EC2Instance as BastionHost
-
-from diagrams.aws.network import ALB as LoadBalancer
-
-from diagrams.aws.compute import EC2Instance as AppCore
-
-from diagrams.aws.database import Database as DB
-
-from diagrams.aws.network import NATGateway , InternetGateway
-
-from diagrams.aws.security import IAM
-
-from diagrams.aws.security import IdentityAndAccessManagementIamRole as Role
-
-from diagrams.aws.management import Cloudwatch
-
-from diagrams.aws.security import CloudHSM
-
-from diagrams.aws.security import AdConnector as ADServices
-
-from diagrams.aws.network import Endpoint
+from diagrams.aws.general import Users, User, OfficeBuilding, InternetAlt2 as
+    Internet
 
 from diagrams.aws.storage import S3
 
-from diagrams.aws.security import WAF
+from diagrams.aws.management import Cloudwatch
 
-from diagrams.onprem.compute import Server as WebApp
+with Diagram("\n\nIdeaWorks Application Architecture", show=False,
+    direction="LR", graph_attr={"fontsize": "40", "compound": "true", "splines":
+    "spline"}, node_attr={"fontsize": "20", "height": "10.6"},
+    edge_attr={"fontsize": "20", "minlen": "1", "penwidth": "1", "concentrate":
+    "true"} , filename ="the_final_icon_architecture" , outformat="png") as diag:
 
- 
+    internet_users = Users("Internet Users")
 
-graph_attr = {
+    home_user = User("Home User")
 
-    "fontsize": "40",
+    office_users = Users("Office Users")
 
-    "compund": "True",
+    corporate_dc = OfficeBuilding("\nCorporate \nDC")
 
-    "splines":"spline",
+    route53 = Route53("Route \n53 DNS")
 
-}
-
-cluster_attr = {
-
-    "fontsize": "30",
-
-}
-
-node_attr = {
-
-    "fontsize": "20",
-
-    "height": "10.6",
-
-}
-
-edge_attr = {
-
-    "fontsize": "20",
-
-    "minlen": "1",
-
-    "penwidth":"1",
-
-    "concentrate": "true"
-
-}
-
- 
-
-with Diagram("\n\nIconWorks Application Architecture", show=False , graph_attr=graph_attr, edge_attr=edge_attr, node_attr=node_attr, direction="LR", outformat="png", filename="the_final_icon_architecture") as diag:
-
-   
-
-    iu = InternetUsers("\nInternet \nUsers")
-
-    internet = internet("\nInternet")
+    internet = Internet("Internet")
 
     waf = WAF("\nWAF")
 
-    r_f= Route53("\nRoute \n53 DNS")
+    igw = InternetGateway("\nInternet \nGateway")
 
-    ig = InternetGateway("\nInternet \nGW")
+    alb = ALB("\nALB")
 
-    cdc = CorporateDC("\nCorporate \nDC")
+    vpn_gateway = VpnGateway("VPN Gateway")
 
-    vg = VpnGateway("\nVPN \nGateway")
+    direct_connect = DirectConnect("Direct \nConnect")
 
-    dic = DirectConnect("\nDirect \nConnect")
+    with Cluster("Region A", direction="TB"):
 
-    hu = HomeUser("\nHome \nUsers")
+        with Cluster("Availability Zone", direction="TB"):
 
-    ou = OfficeUsers("\nOffice \nUsers")
+            with Cluster("Web Zone", direction="TB"):
 
- 
+                web_jws_01 = EC2("\nWeb 01")
 
-    iu >> internet
+                web_jws_02 = EC2("\nWeb 02")
 
-    r_f >> internet
+            with Cluster("Application Zone", direction="TB"):
 
-    internet >> waf
+                mw_jboss_01 = EC2("\nMW 01")
 
-   
+                mw_jboss_02 = EC2("\nMW 02")
 
-    waf >> ig
+            with Cluster("Data Zone", direction="TB"):
 
-    cdc >> dic
+                db_mysql_01 = RDS("\n\nMSSQL & \nMySQL 01")
 
- 
+                db_mysql_02 = RDS("\n\nMSSQL & \nMySQL 02")
 
-    ou >> dic
+        with Cluster("Public Zone", direction="TB"):
 
-    hu >> vg
+            bastion_host = EC2("\nBastion Host")
 
-   
+        internet_users >> internet
 
-    with Cluster("Region A" , direction = "LR") as r1:
+        route53 >> internet
 
-             
+        internet >> waf
 
-        with Cluster("Availability Zone A" , direction="TB" , graph_attr={"nodesep": "0.8", "ranksep": "1.2"}) as az:
+        waf >> igw
 
- 
+        igw >> alb
 
-             with Cluster("Data Zone") as dz:
+        alb >> web_jws_01
 
-                            db1=DB("\nMSSQL & \nMySQL 01")
+        alb >> web_jws_02
 
-                            db2=DB("\nMSSQL & \nMySQL 02")
+        web_jws_01 >> mw_jboss_01
 
-                            db_g =[db1,db2]
+        web_jws_01 >> mw_jboss_02
 
-           
+        web_jws_02 >> mw_jboss_01
 
-             lb = LoadBalancer("\nLoad \nBalancer 01")
+        web_jws_02 >> mw_jboss_02
 
-             with Cluster("Web Zone") as wz:
+        mw_jboss_01 >> db_mysql_01
 
-                wa1 = WebApp("\nWeb App 01")
+        mw_jboss_01 >> db_mysql_02
 
-                wa2 = WebApp("\nWeb App 02")
+        mw_jboss_02 >> db_mysql_01
 
-                wa_g = [wa1,wa2]
+        mw_jboss_02 >> db_mysql_02
 
- 
+        home_user >> vpn_gateway
 
-             with Cluster("Application Zone") as az:
+        vpn_gateway >> bastion_host
 
-                ap1 = AppCore("\nApp Core 01")
+        office_users >> direct_connect
 
-                ap2 = AppCore("\nApp Core 02")
+        corporate_dc >> direct_connect
 
-                apg = [ap1,ap2]
+        direct_connect >> bastion_host
 
- 
+        with Cluster("Other associated Services & Resources", direction="LR"):
 
-        with Cluster("Public Zone") as pz:
+            iam = IAM("IAM")
 
-            bh = BastionHost("\nBastion \nHost")        
+            role = Role("Role")
 
-             
+            cloudwatch = Cloudwatch("Cloudwatch")
 
-    wa1 >> ap1
+            cloudhsm = CloudHSM("CloudHSM")
 
-    wa2 >> ap2
+            ad_services = AD("AD Services")
 
-    wa1 >> ap2
+            endpoints = Endpoint("Endpoint")
 
-    wa2 >> ap1
+            s3 = S3("S3")
 
- 
+iam >> Edge(style="invis") >> role >> Edge(style="invis") >>
+    cloudwatch >> Edge(style="invis") >> cloudhsm
 
-   
-
-    ap1 >> db1
-
-    ap2 >> db2
-
-    ap2 >> db1
-
-    ap1 >> db2
-
- 
-
-    lb >> wa_g
-
-    dic >> bh
-
-   
-
-    ig >> lb
-
-    vg >> bh
+ad_services >> Edge(style="invis") >> endpoints >>
+    Edge(style="invis") >> s3
