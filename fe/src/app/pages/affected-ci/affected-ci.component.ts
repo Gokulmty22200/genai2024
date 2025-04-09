@@ -67,8 +67,7 @@ export class AffectedCiComponent {
               
             case 'CHG0030008':
               this.impactData.directImpact = [
-                'IDEAWORKS application',
-                'Cryst Application'
+                'IDEAWORKS application'
               ];
               this.impactData.partialImpact = [
                 'Middleware Application 02',
