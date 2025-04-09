@@ -34,7 +34,7 @@
       </div>
 
       <div class="script-container" *ngIf="!isLoadingImages && scriptBlob">
-        <pre><code class="language-python">{{scriptBlob}}</code></pre>
+        <pre><code class="language-python" [innerHTML]="formatScriptContent(scriptBlob)"></code></pre>
       </div>
 
       <div class="placeholder-text" *ngIf="!isLoadingImages && !scriptBlob">

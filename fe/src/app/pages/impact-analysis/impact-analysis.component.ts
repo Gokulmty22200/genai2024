@@ -488,6 +488,43 @@ private loadBackupScript(): void {
     });
   }
 
+  formatScriptContent(content: string): string {
+    if (!content) return '';
+    
+    return content
+      // Remove multiple empty lines
+      .replace(/\n\s*\n/g, '\n\n')
+      // Break long lines
+      .split('\n')
+      .map(line => {
+        if (line.length > 80) { // Adjust this number based on your screen width
+          return this.breakLongLine(line);
+        }
+        return line;
+      })
+      .join('\n');
+  }
+  
+  private breakLongLine(line: string): string {
+    const maxWidth = 80; // Adjust this number based on your screen width
+    let result = '';
+    let currentLine = '';
+    
+    // Split by spaces to avoid breaking words
+    const words = line.split(' ');
+    
+    for (const word of words) {
+      if (currentLine.length + word.length > maxWidth) {
+        result += currentLine.trim() + '\n    '; // Add indentation for wrapped lines
+        currentLine = word + ' ';
+      } else {
+        currentLine += word + ' ';
+      }
+    }
+    
+    return result + currentLine.trim();
+  }
+
   ngOnDestroy() {
     // Revoke object URLs to prevent memory leaks
     if (this.architectureDiagramBlob) {
