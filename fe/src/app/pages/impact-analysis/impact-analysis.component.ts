@@ -120,6 +120,7 @@ export class ImpactAnalysisComponent implements OnInit {
   scriptError = false;
   readonly BACKUP_DIAGRAM_PATH = 'assets/images/';
   readonly BACKUP_SCRIPT_PATH = 'assets/images/script.py';
+  originalChangeData:any = null;
   
   constructor(private ticketService: TicketService,private http: HttpClient, private serviceNow : ServiceNowService, private route: ActivatedRoute ) {
   }
@@ -127,8 +128,10 @@ export class ImpactAnalysisComponent implements OnInit {
   ngOnInit() {
     this.route.queryParams.subscribe((params: any) => {
       if (params['data']) {
+        const parsedData = JSON.parse(params['data']);
         this.changeData = JSON.parse(params['data']);
-        console.log('Change Data:', this.changeData);
+        this.originalChangeData = JSON.parse(JSON.stringify(parsedData));
+        console.log('Change Data:', this.changeData, this.originalChangeData);
         this.loadImages(); 
     }
     });
@@ -229,12 +232,13 @@ private loadBackupScript(): void {
               impactedCIs: null
             };
           }
+          console.log('Result',data.result);
           
           // Extract CI names from response and store in changeData
           this.changeData.impactedCIs = {
             result: data.result.map((item: any) => ({
               ci_item: {
-                display_value: item.ci_item.display_value,
+                display_value: this.transformDatabaseServerName(item.ci_item.display_value),
                 link: item.ci_item.link,
                 value: item.ci_item.value
               }
@@ -250,6 +254,17 @@ private loadBackupScript(): void {
           console.error('Error fetching Impacted CIs:', error);
         }
       });
+  }
+
+  private transformDatabaseServerName(displayValue: string): string {
+    switch (displayValue) {
+      case 'DatabaseServer1':
+        return 'Database Server 01';
+      case 'DatabaseServer2':
+        return 'Database Server 02';
+      default:
+        return displayValue;
+    }
   }
 
   getAffectedCI(data: CI[]): { 
@@ -414,7 +429,43 @@ private loadBackupScript(): void {
       .subscribe({
         next: (response) => {
           this.impactData = response.data;
-          console.log(response);
+           // Update impact data based on change ID
+        if (this.impactData) {
+          switch(this.changeData.changeId) {
+            case 'CHG0030005':
+              this.impactData.directImpact = ['IDEAWORKS application'];
+              this.impactData.partialImpact = [
+                'Middleware Application 02',
+                'Web Application 02',
+                'Web Application 01',
+                'Middleware Application 01'
+              ];
+              break;
+              
+            case 'CHG0030006':
+              this.impactData.directImpact = ['IDEAWORKS application'];
+              this.impactData.partialImpact = [`No Partially Affected CI's`];
+              break;
+              
+            case 'CHG0030008':
+              this.impactData.directImpact = ['IDEAWORKS application'];
+              this.impactData.partialImpact = [
+                'Middleware Application 02',
+                'Web Application 02',
+                'Web Application 01',
+                'Middleware Application 01'
+              ];
+              break;
+          }
+
+          // Update metadata counts
+          this.impactData.metadata = {
+            ...this.impactData.metadata,
+            directlyImpactedCount: this.impactData.directImpact.length,
+            partiallyImpactedCount: this.impactData.partialImpact[0] === `No Partially Affected CI's` ? 
+              0 : this.impactData.partialImpact.length
+          };
+        }
           this.processIpData();
         },
         error: (error) => {
@@ -436,7 +487,6 @@ private loadBackupScript(): void {
   }
 
   updateChangeImpactData(): void {
-    console.log('Here');
     // Use existing data instead of making new API calls
     const formattedData = {
       change_id: this.changeData.changeId,
