@@ -69,7 +69,7 @@ exports.processChangeData = async (req, res) => {
             timestamp: new Date().toISOString(),
             totalRecords: analysisResults.length,
             analysis: analysisResults,
-            relationships: ciDataResult // Store processed relationships for reference
+            relationships: ciDataResult 
         };
 
         fs.writeFileSync(outputPath, JSON.stringify(outputData, null, 2));
@@ -104,7 +104,6 @@ async function processCIData(relationshipData) {
     
     const componentMap = new Map();
 
-    // Initialize component map
     relationshipData.forEach(relation => {
 
         if (!validRelationshipTypes.includes(relation.type.name)) {
@@ -159,7 +158,7 @@ async function processCIData(relationshipData) {
         }
     });
 
-    // Convert to final structure
+    // final structure
     const components = Array.from(componentMap.values())
         .map(component => ({
             componentName: component.componentName,
@@ -213,14 +212,12 @@ async function analyzeImpact(data) {
     const firewall = affetcedCI.firewall;
     const otherCIs = affetcedCI.otherCI || [];
     
-    // Get hierarchy data
     const hierarchy = relationshipData.hierarchy;
     
     const directlyImpacted = new Set();
     const partiallyImpacted = new Set();
     const impactedIPs = new Map();
 
-    // Helper functions
     const getComponentIP = (componentName) => {
         const selectedCI = selectedCIs.find(ci => ci.name === componentName);
         if (selectedCI?.ip_address) {
@@ -290,7 +287,7 @@ async function analyzeImpact(data) {
         });
     };
 
-    // Create IP mapping
+    //IP mapping
     const ciIPMapping = new Map();
     otherCIs.forEach(ci => {
         if (ci.ip_address && ci.name) {

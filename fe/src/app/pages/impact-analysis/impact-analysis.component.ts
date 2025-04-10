@@ -1,89 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { catchError, forkJoin, map, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+
 
 import { MaterialModule } from '../../material.module';
 import { TicketService } from '../../services/ticket.service';
 import { CI } from '../../interface/change-ticket.interface';
 import { ServiceNowService } from 'src/app/services/service-now.service';
-import { ActivatedRoute } from '@angular/router';
 import { ParentChildComponent } from "../parent-child/parent-child.component";
 import { AffectedCiComponent } from "../affected-ci/affected-ci.component";
-import { catchError, forkJoin, map, of } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-
-interface Node {
-  id: string;
-  componentName: string;
-  children: string[];
-  parents: string[];
-}
-
-interface HierarchyResponse {
-  success: boolean;
-  message: string;
-  data: {
-    hierarchy: Node[];
-    metadata: {
-      totalComponents: number;
-      rootNodes: number;
-      leafNodes: number;
-    };
-  };
-}
-
-interface TrafficData {
-  teams: TeamData[];
-  metadata: {
-    totalTeams: number;
-    impactSummary: {
-      affected: number;
-      direct: number;
-      partial: number;
-    };
-    severity: string;
-  };
-  affectedCIs: [{
-    name: string;
-    category: string;
-    subcategory: string;
-  }];
-}
-
-interface TeamData {
-  team: string;
-  records: {
-    deviceVendor: string[];
-    destination: string;
-    ports: PortData[];
-    ciName: string;
-    impactType: string;
-  }[];
-}
-
-interface PortData {
-  id: string;
-  eventId: string;
-}
-
-interface PortProtocolGroup {
-  protocol: string;
-  ports: {
-    id: string;
-    eventId: string;
-  }[];
-}
-
-interface changeData {
-  changeId: string;
-  impactedCIs?: any;
-  category: string;
-  description: string;
-  implementationDate: string;
-}
-
-interface ImageUrls {
-  [key: string]: string;
-}
+import { TrafficData, changeData, ImageUrls, PortProtocolGroup, HierarchyResponse } from "../../interface/impact-analysis.interface";
 
 @Component({
   selector: 'app-impact-analysis',
@@ -97,7 +25,6 @@ export class ImpactAnalysisComponent implements OnInit {
   isLoading = true;
   changeData: changeData;
   selectedTab = 0;
-  // imagePath = 'assets/images/architecture_diagram.png';
   imageApiUrls: ImageUrls = {
     'CHG0030005': 'ad08b885837022101767e270ceaad33f',
     'CHG0030008': '047ee489833022101767e270ceaad35b'
@@ -136,7 +63,6 @@ export class ImpactAnalysisComponent implements OnInit {
     }
     });
     this.getImpactedCIs();
-    // this.getRelationshipData();
 }
 
 loadImages(): void {
@@ -182,7 +108,6 @@ loadImages(): void {
       error: (error) => {
         console.error('Error in loadImages:', error);
         this.isLoadingImages = false;
-        // Use backup assets on error
         this.architectureDiagramBlob = this.BACKUP_DIAGRAM_PATH+this.changeData.changeId+'.png';
         this.loadBackupScript();
       }
@@ -232,9 +157,6 @@ private loadBackupScript(): void {
               impactedCIs: null
             };
           }
-          console.log('Result',data.result);
-          
-          // Extract CI names from response and store in changeData
           this.changeData.impactedCIs = {
             result: data.result.map((item: any) => ({
               ci_item: {
@@ -245,9 +167,6 @@ private loadBackupScript(): void {
             }))
           };
 
-          console.log('Impacted CIs:', this.changeData.impactedCIs);
-          
-          // Proceed with getting relationship data if needed
           this.getRelationshipData();
         },
         error: (error: any) => {
@@ -327,7 +246,6 @@ private loadBackupScript(): void {
       });
     });
 
-    // Convert to array format
     this.protocolGroups = Array.from(protocolMap.entries()).map(([protocol, ports]) => ({
       protocol,
       ports: Array.from(ports).map(portId => {
@@ -340,7 +258,6 @@ private loadBackupScript(): void {
       }).sort((a, b) => Number(a.id) - Number(b.id))
     })).sort((a, b) => a.protocol.localeCompare(b.protocol));
 
-    // Update uniquePorts for table display
     this.uniquePorts = this.protocolGroups.flatMap(group => 
       group.ports.map(port => ({
         port: port.id,
@@ -412,7 +329,6 @@ private loadBackupScript(): void {
       .subscribe({
         next: (response) => {
           if (response?.data?.hierarchy) {
-            // Share the processed data with child components
             this.relationshipData = response.data;
             this.getIpData();
           }
@@ -487,7 +403,6 @@ private loadBackupScript(): void {
   }
 
   updateChangeImpactData(): void {
-    // Use existing data instead of making new API calls
     const formattedData = {
       change_id: this.changeData.changeId,
       change_description: this.changeData.description,
@@ -527,7 +442,6 @@ private loadBackupScript(): void {
       }
     };
   
-    // Send formatted data to updateChangeData endpoint
     this.ticketService.updateChangeImpactData(formattedData).subscribe({
       next: (response) => {
         console.log('Change impact data updated successfully:', response);
@@ -542,12 +456,10 @@ private loadBackupScript(): void {
     if (!content) return '';
     
     return content
-      // Remove multiple empty lines
       .replace(/\n\s*\n/g, '\n\n')
-      // Break long lines
       .split('\n')
       .map(line => {
-        if (line.length > 80) { // Adjust this number based on your screen width
+        if (line.length > 80) { 
           return this.breakLongLine(line);
         }
         return line;
@@ -556,16 +468,15 @@ private loadBackupScript(): void {
   }
   
   private breakLongLine(line: string): string {
-    const maxWidth = 80; // Adjust this number based on your screen width
+    const maxWidth = 80;
     let result = '';
     let currentLine = '';
     
-    // Split by spaces to avoid breaking words
     const words = line.split(' ');
     
     for (const word of words) {
       if (currentLine.length + word.length > maxWidth) {
-        result += currentLine.trim() + '\n    '; // Add indentation for wrapped lines
+        result += currentLine.trim() + '\n    ';
         currentLine = word + ' ';
       } else {
         currentLine += word + ' ';
@@ -576,7 +487,6 @@ private loadBackupScript(): void {
   }
 
   ngOnDestroy() {
-    // Revoke object URLs to prevent memory leaks
     if (this.architectureDiagramBlob) {
       URL.revokeObjectURL(this.architectureDiagramBlob);
     }

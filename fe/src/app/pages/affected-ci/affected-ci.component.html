@@ -1,12 +1,12 @@
 <div class="impact-analysis-container">
     <!-- <mat-progress-bar *ngIf="!impactData" mode="indeterminate"></mat-progress-bar> -->
   
-    <div *ngIf="!loading && !impactData" class="no-data">
+    <div *ngIf="!impactData" class="no-data">
       <mat-spinner diameter="40"></mat-spinner>
         <p>Loading...</p>
     </div>
   
-    <div *ngIf="!loading && impactData" class="impact-content">
+    <div *ngIf="impactData" class="impact-content">
       <!-- Change Details Card -->
       <mat-card class="change-details">
         <mat-card-header>

@@ -4,32 +4,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MaterialModule } from 'src/app/material.module';
 import { ServiceNowService } from 'src/app/services/service-now.service';
 import { TicketService } from 'src/app/services/ticket.service';
-
-
-interface Node {
-  id: string;
-  componentName: string;
-  children: string[];
-  parents: string[];
-  relationships: { [key: string]: string };
-  runsOn: {
-    runsOnParents: string[];
-    runsOnChildren: string[];
-  };
-}
-
-interface HierarchyResponse {
-  success: boolean;
-  message: string;
-  data: {
-    hierarchy: Node[];
-    metadata: {
-      totalComponents: number;
-      rootNodes: number;
-      leafNodes: number;
-    };
-  };
-}
+import { Node } from '../../interface/parent-child.interface';
 
 @Component({
   selector: 'app-parent-child',
@@ -57,13 +32,11 @@ export class ParentChildComponent implements OnInit{
     try {
       this.hierarchicalNodes = data.hierarchy;
       
-      // Build component map
       this.componentMap.clear();
       this.hierarchicalNodes.forEach(node => {
         this.componentMap.set(node.id, node.componentName);
       });
 
-      // Sort nodes
       this.hierarchicalNodes = this.hierarchicalNodes.sort((a, b) => {
         if (a.parents.length === 0 && b.parents.length > 0) return -1;
         if (b.parents.length === 0 && a.parents.length > 0) return 1;

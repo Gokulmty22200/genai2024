@@ -26,7 +26,6 @@ export class ChangeTicketComponent {
     'impactedCIs',
     'implementationDate',
     'category',
-    // 'implementer',
     'impactAnalysis'
   ];
   
@@ -36,7 +35,6 @@ export class ChangeTicketComponent {
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private ticketService: TicketService, private serviceNow : ServiceNowService, private router: Router, ) {
-    // Initialize with empty array of ChangeTicket type
     this.dataSource = new MatTableDataSource<ChangeTicket>([]);
   }
 
@@ -58,10 +56,7 @@ export class ChangeTicketComponent {
     this.serviceNow.getChangeTicketData()
       .pipe(
         switchMap((ticketData: any) => {
-          // Store the ticket data
           const tickets = ticketData.result;
-          
-          // Create an array of observables for each ticket's impacted CIs
           const ciRequests = tickets.map((ticket: any) => 
             this.serviceNow.getImpactedCIs(ticket.number.value).pipe(
               map(impactedCIsResponse => ({
@@ -73,16 +68,11 @@ export class ChangeTicketComponent {
             )
           );
 
-          // Combine all CI requests
           return forkJoin(ciRequests).pipe(
             map((ciResults: any) => {
-              // Create a map of ticket numbers to their CI names
               const ciMap = new Map(
                 ciResults.map((result: any) => [result.ticketNumber, result.ciNames])
               );
-              console.log(tickets);
-
-              // Update each ticket with its corresponding CIs
               return tickets.map((ticket: { number: { value: keyof typeof dates }, cmdb_ci: any }) => ({
                 ...ticket,
                 cmdb_ci: {

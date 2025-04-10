@@ -11,11 +11,9 @@ exports.processCIData = async (req, res) => {
             'Depends on::Used by',
             'Hosted on::Hosts'
         ];
-        
         // Create maps to store components and their relationships
         const componentMap = new Map();
-        const runsOnMap = new Map();  // New map for Runs on relationships
-
+        const runsOnMap = new Map(); 
         // Initialize component map with empty arrays for parents and children
         ciData.forEach(relation => {
             if (!validRelationshipTypes.includes(relation.type.name)) {
