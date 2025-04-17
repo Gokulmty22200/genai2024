@@ -54,7 +54,7 @@ exports.processCIData = async (req, res) => {
             const childComponent = componentMap.get(child.name);
 
             // Skip utility components
-            const excludedComponents = ['IAM Role', 'Role', 'Cloudwatch', 'Cloud HSM', 'S3 Bucket', 'Active Directory services', 'Direct Connect', 'Route 53', 'VPN Nat Gateway', 'Internet Gateway'];
+            const excludedComponents = ['IAM Role', 'Role', 'Cloudwatch', 'Cloud HSM', 'S3 Bucket', 'Active Directory services', 'Route 53', 'VPN Nat Gateway'];
             if (!excludedComponents.includes(child.name)) {
                 parentComponent.children.add(child.name);
                 childComponent.parents.add(parent.name);
