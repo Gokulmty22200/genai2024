@@ -67,7 +67,7 @@
           </mat-card-header>
           <mat-card-content>
             @if(impactData.partialImpact.length === 0){
-              No Partially Affected CI's
+              <p class="affected-ci">No Partially Affected CI's</p>
             } @else {
               <mat-list>
                 <mat-list-item *ngFor="let ci of impactData.partialImpact">

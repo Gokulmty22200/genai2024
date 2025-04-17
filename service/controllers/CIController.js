@@ -367,15 +367,13 @@ exports.analyzeImpact = async (req, res) => {
         const firewall = affetcedCI.firewall;
         const otherCIs = affetcedCI.otherCI || [];
         
-        // Get hierarchy data
         const hierarchy = relationshipData.hierarchy;
-        
-        // Initialize impact sets for all CIs
         const directlyImpacted = new Set();
         const partiallyImpacted = new Set();
         const impactedIPs = new Map();
+        const affectedCINames = new Set(selectedCIs.map(ci => ci.name));
 
-        // Helper functions first
+        // Helper functions
         const getComponentIP = (componentName) => {
             const selectedCI = selectedCIs.find(ci => ci.name === componentName);
             if (selectedCI?.ip_address) {
@@ -402,7 +400,7 @@ exports.analyzeImpact = async (req, res) => {
             if (!node) return;
 
             node.parents.forEach(parentName => {
-                if (isInfrastructureComponent(parentName)) {
+                if (isInfrastructureComponent(parentName) || affectedCINames.has(parentName)) {
                     return;
                 }
 
@@ -429,6 +427,10 @@ exports.analyzeImpact = async (req, res) => {
             if (!node) return;
 
             node.children.forEach(childName => {
+                if (affectedCINames.has(childName)) {
+                    return;
+                }
+
                 const childNode = hierarchy.find(n => n.componentName === childName);
                 if (childNode) {
                     if (isDirectImpact) {
@@ -465,10 +467,14 @@ exports.analyzeImpact = async (req, res) => {
             traverseUpstream(selectedCI.name, true);
             traverseDownstream(selectedCI.name, true);
         }
-        // Remove directly impacted from partially impacted
-        directlyImpacted.forEach(name => partiallyImpacted.delete(name));
+
+        // Remove affected CIs from impact lists
+        affectedCINames.forEach(name => {
+            directlyImpacted.delete(name);
+            partiallyImpacted.delete(name);
+        });
         
-        // Calculate severity based on total impact
+        // Calculate severity
         let severity;
         const totalImpact = directlyImpacted.size + partiallyImpacted.size;
         if (totalImpact > 8) {
@@ -483,17 +489,17 @@ exports.analyzeImpact = async (req, res) => {
             success: true,
             message: 'Impact analysis completed successfully',
             data: {
-                affectedCIs: selectedCIs.map(ci => ci.name), // Array of affected CI names
+                affectedCIs: selectedCIs.map(ci => ci.name),
                 directImpact: Array.from(directlyImpacted),
                 partialImpact: Array.from(partiallyImpacted),
                 impactedIPs: Array.from(impactedIPs.entries()).map(([component, ip]) => ({
                     component,
                     ip,
-                    impactType: selectedCIs.some(ci => ci.name === component) ? 'affected' : 
+                    impactType: affectedCINames.has(component) ? 'affected' : 
                               directlyImpacted.has(component) ? 'direct' : 'partial'
                 })),
                 metadata: {
-                    totalComponents: totalImpact,
+                    totalComponents: totalImpact + selectedCIs.length,
                     directlyImpactedCount: directlyImpacted.size,
                     partiallyImpactedCount: partiallyImpacted.size,
                     impactedIPsCount: impactedIPs.size,

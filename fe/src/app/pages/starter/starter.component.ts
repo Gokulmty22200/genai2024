@@ -19,11 +19,6 @@ import { ChangeStatisticsComponent } from 'src/app/components/change-statistics/
     AppProfitExpensesComponent,
     CategoryTicketsComponent,
     ChangeStatisticsComponent
-    // AppTrafficDistributionComponent,
-    // AppProductSalesComponent,
-    // AppUpcomingSchedulesComponent,
-    // AppTopEmployeesComponent,
-    // AppBlogComponent
   ],
   templateUrl: './starter.component.html',
   encapsulation: ViewEncapsulation.None,

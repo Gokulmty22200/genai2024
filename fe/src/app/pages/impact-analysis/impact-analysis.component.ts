@@ -347,32 +347,32 @@ private loadBackupScript(): void {
           this.impactData = response.data;
            // Update impact data based on change ID
         if (this.impactData) {
-          switch(this.changeData.changeId) {
-            case 'CHG0030005':
-              this.impactData.directImpact = ['IDEAWORKS application'];
-              this.impactData.partialImpact = [
-                'Middleware Application 02',
-                'Web Application 02',
-                'Web Application 01',
-                'Middleware Application 01'
-              ];
-              break;
+          // switch(this.changeData.changeId) {
+          //   case 'CHG0030005':
+          //     this.impactData.directImpact = ['IDEAWORKS application'];
+          //     this.impactData.partialImpact = [
+          //       'Middleware Application 02',
+          //       'Web Application 02',
+          //       'Web Application 01',
+          //       'Middleware Application 01'
+          //     ];
+          //     break;
               
-            case 'CHG0030006':
-              this.impactData.directImpact = ['IDEAWORKS application'];
-              this.impactData.partialImpact = [`No Partially Affected CI's`];
-              break;
+          //   case 'CHG0030006':
+          //     this.impactData.directImpact = ['IDEAWORKS application'];
+          //     this.impactData.partialImpact = [`No Partially Affected CI's`];
+          //     break;
               
-            case 'CHG0030008':
-              this.impactData.directImpact = ['IDEAWORKS application'];
-              this.impactData.partialImpact = [
-                'Middleware Application 02',
-                'Web Application 02',
-                'Web Application 01',
-                'Middleware Application 01'
-              ];
-              break;
-          }
+          //   case 'CHG0030008':
+          //     this.impactData.directImpact = ['IDEAWORKS application'];
+          //     this.impactData.partialImpact = [
+          //       'Middleware Application 02',
+          //       'Web Application 02',
+          //       'Web Application 01',
+          //       'Middleware Application 01'
+          //     ];
+          //     break;
+          // }
 
           // Update metadata counts
           this.impactData.metadata = {
